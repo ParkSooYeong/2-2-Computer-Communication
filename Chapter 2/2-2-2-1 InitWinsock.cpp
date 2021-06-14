@@ -1,7 +1,7 @@
 #pragma comment(lib, "ws2_32")
 #include <winsock2.h>
 
-// ¼ÒÄÏ ÇÔ¼ö ¿À·ù Ãâ·Â ÈÄ Á¾·á
+// ì†Œì¼“ í•¨ìˆ˜ ì˜¤ë¥˜ ì¶œë ¥ í›„ ì¢…ë£Œ
 void err_quit(char *msg)
 {
     LPVOID lpMsgBuf;
@@ -17,21 +17,21 @@ void err_quit(char *msg)
 
 int main(int argc, char *argv[])
 {
-    // À©¼Ó ÃÊ±âÈ­
+    // ìœˆì† ì´ˆê¸°í™”
     WSADATA wsa;
     if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
         return 1;
-    MessageBox(NULL, "À©¼Ó ÃÊ±âÈ­ ¼º°ø", "¾Ë¸²", MB_OK);
+    MessageBox(NULL, "ìœˆì† ì´ˆê¸°í™” ì„±ê³µ", "ì•Œë¦¼", MB_OK);
 
     // socket()
     SOCKET tcp_sock = socket(AF_INET, SOCK_STREAM, 0);
     if (tcp_sock == INVALID_SOCKET) err_quit("socket()");
-    MessageBox(NULL, "TCP ¼ÒÄÏ »ı¼º ¼º°ø", "¾Ë¸²", MB_OK);
+    MessageBox(NULL, "TCP ì†Œì¼“ ìƒì„± ì„±ê³µ", "ì•Œë¦¼", MB_OK);
 
     // closesocket()
     closesocket(tcp_sock);
 
-    // À©¼Ó Á¾·á
+    // ìœˆì† ì¢…ë£Œ
     WSACleanup();
     return 0;
 }
