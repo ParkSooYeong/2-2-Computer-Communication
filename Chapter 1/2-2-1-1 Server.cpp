@@ -1,4 +1,4 @@
-#define _WINSOCK_DEPRECATED_NO_WARNINGS // ÃÖ½Å VC++ ÄÄÆÄÀÏ ½Ã °æ°í ¹æÁö
+#define _WINSOCK_DEPRECATED_NO_WARNINGS // ìµœì‹  VC++ ì»´íŒŒì¼ ì‹œ ê²½ê³  ë°©ì§€
 #pragma comment(lib, "ws2_32")
 #include <winsock2.h>
 #include <ws2tcpip.h>
@@ -8,7 +8,7 @@
 #define SERVERPORT 9000
 #define BUFSIZE    512
 
-// ¼ÒÄÏ ÇÔ¼ö ¿À·ù Ãâ·Â ÈÄ Á¾·á
+// ì†Œì¼“ í•¨ìˆ˜ ì˜¤ë¥˜ ì¶œë ¥ í›„ ì¢…ë£Œ
 void err_quit(char *msg)
 {
     LPVOID lpMsgBuf;
@@ -22,7 +22,7 @@ void err_quit(char *msg)
     exit(1);
 }
 
-// ¼ÒÄÏ ÇÔ¼ö ¿À·ù Ãâ·Â
+// ì†Œì¼“ í•¨ìˆ˜ ì˜¤ë¥˜ ì¶œë ¥
 void err_display(char *msg)
 {
     LPVOID lpMsgBuf;
@@ -35,7 +35,7 @@ void err_display(char *msg)
     LocalFree(lpMsgBuf);
 }
 
-// TCP ¼­¹ö(IPv4)
+// TCP ì„œë²„(IPv4)
 DWORD WINAPI TCPServer4(LPVOID arg)
 {
     int retval;
@@ -57,7 +57,7 @@ DWORD WINAPI TCPServer4(LPVOID arg)
     retval = listen(listen_sock, SOMAXCONN);
     if (retval == SOCKET_ERROR) err_quit("listen()");
 
-    // µ¥ÀÌÅÍ Åë½Å¿¡ »ç¿ëÇÒ º¯¼ö
+    // ë°ì´í„° í†µì‹ ì— ì‚¬ìš©í•  ë³€ìˆ˜
     SOCKET client_sock;
     SOCKADDR_IN clientaddr;
     int addrlen;
@@ -72,13 +72,13 @@ DWORD WINAPI TCPServer4(LPVOID arg)
             break;
         }
 
-        // Á¢¼ÓÇÑ Å¬¶óÀÌ¾ğÆ® Á¤º¸ Ãâ·Â
-        printf("\n[TCP ¼­¹ö] Å¬¶óÀÌ¾ğÆ® Á¢¼Ó: IP ÁÖ¼Ò=%s, Æ÷Æ® ¹øÈ£=%d\n",
+        // ì ‘ì†í•œ í´ë¼ì´ì–¸íŠ¸ ì •ë³´ ì¶œë ¥
+        printf("\n[TCP ì„œë²„] í´ë¼ì´ì–¸íŠ¸ ì ‘ì†: IP ì£¼ì†Œ=%s, í¬íŠ¸ ë²ˆí˜¸=%d\n",
             inet_ntoa(clientaddr.sin_addr), ntohs(clientaddr.sin_port));
 
-        // Å¬¶óÀÌ¾ğÆ®¿Í µ¥ÀÌÅÍ Åë½Å
+        // í´ë¼ì´ì–¸íŠ¸ì™€ ë°ì´í„° í†µì‹ 
         while (1) {
-            // µ¥ÀÌÅÍ ¹Ş±â
+            // ë°ì´í„° ë°›ê¸°
             retval = recv(client_sock, buf, BUFSIZE, 0);
             if (retval == SOCKET_ERROR) {
                 err_display("recv()");
@@ -87,14 +87,14 @@ DWORD WINAPI TCPServer4(LPVOID arg)
             else if (retval == 0)
                 break;
 
-            // ¹ŞÀº µ¥ÀÌÅÍ Ãâ·Â
+            // ë°›ì€ ë°ì´í„° ì¶œë ¥
             buf[retval] = '\0';
             printf("%s", buf);
         }
 
         // closesocket()
         closesocket(client_sock);
-        printf("[TCP ¼­¹ö] Å¬¶óÀÌ¾ğÆ® Á¾·á: IP ÁÖ¼Ò=%s, Æ÷Æ® ¹øÈ£=%d\n",
+        printf("[TCP ì„œë²„] í´ë¼ì´ì–¸íŠ¸ ì¢…ë£Œ: IP ì£¼ì†Œ=%s, í¬íŠ¸ ë²ˆí˜¸=%d\n",
             inet_ntoa(clientaddr.sin_addr), ntohs(clientaddr.sin_port));
     }
 
@@ -104,7 +104,7 @@ DWORD WINAPI TCPServer4(LPVOID arg)
     return 0;
 }
 
-// TCP ¼­¹ö(IPv6)
+// TCP ì„œë²„(IPv6)
 DWORD WINAPI TCPServer6(LPVOID arg)
 {
     int retval;
@@ -126,7 +126,7 @@ DWORD WINAPI TCPServer6(LPVOID arg)
     retval = listen(listen_sock, SOMAXCONN);
     if (retval == SOCKET_ERROR) err_quit("listen()");
 
-    // µ¥ÀÌÅÍ Åë½Å¿¡ »ç¿ëÇÒ º¯¼ö
+    // ë°ì´í„° í†µì‹ ì— ì‚¬ìš©í•  ë³€ìˆ˜
     SOCKET client_sock;
     SOCKADDR_IN6 clientaddr;
     int addrlen;
@@ -141,16 +141,16 @@ DWORD WINAPI TCPServer6(LPVOID arg)
             break;
         }
 
-        // Á¢¼ÓÇÑ Å¬¶óÀÌ¾ğÆ® Á¤º¸ Ãâ·Â
+        // ì ‘ì†í•œ í´ë¼ì´ì–¸íŠ¸ ì •ë³´ ì¶œë ¥
         char ipaddr[50];
         DWORD ipaddrlen = sizeof(ipaddr);
         WSAAddressToString((SOCKADDR *)&clientaddr, sizeof(clientaddr),
             NULL, ipaddr, &ipaddrlen);
-        printf("\n[TCP ¼­¹ö] Å¬¶óÀÌ¾ğÆ® Á¢¼Ó: %s\n", ipaddr);
+        printf("\n[TCP ì„œë²„] í´ë¼ì´ì–¸íŠ¸ ì ‘ì†: %s\n", ipaddr);
 
-        // Å¬¶óÀÌ¾ğÆ®¿Í µ¥ÀÌÅÍ Åë½Å
+        // í´ë¼ì´ì–¸íŠ¸ì™€ ë°ì´í„° í†µì‹ 
         while (1) {
-            // µ¥ÀÌÅÍ ¹Ş±â
+            // ë°ì´í„° ë°›ê¸°
             retval = recv(client_sock, buf, BUFSIZE, 0);
             if (retval == SOCKET_ERROR) {
                 err_display("recv()");
@@ -159,14 +159,14 @@ DWORD WINAPI TCPServer6(LPVOID arg)
             else if (retval == 0)
                 break;
 
-            // ¹ŞÀº µ¥ÀÌÅÍ Ãâ·Â
+            // ë°›ì€ ë°ì´í„° ì¶œë ¥
             buf[retval] = '\0';
             printf("%s", buf);
         }
 
         // closesocket()
         closesocket(client_sock);
-        printf("[TCP ¼­¹ö] Å¬¶óÀÌ¾ğÆ® Á¾·á: %s\n", ipaddr);
+        printf("[TCP ì„œë²„] í´ë¼ì´ì–¸íŠ¸ ì¢…ë£Œ: %s\n", ipaddr);
     }
 
     // closesocket()
@@ -177,7 +177,7 @@ DWORD WINAPI TCPServer6(LPVOID arg)
 
 int main(int argc, char *argv[])
 {
-    // À©¼Ó ÃÊ±âÈ­
+    // ìœˆì† ì´ˆê¸°í™”
     WSADATA wsa;
     if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
         return 1;
@@ -188,7 +188,7 @@ int main(int argc, char *argv[])
 
     WaitForMultipleObjects(2, hThread, TRUE, INFINITE);
 
-    // À©¼Ó Á¾·á
+    // ìœˆì† ì¢…ë£Œ
     WSACleanup();
     return 0;
 }
