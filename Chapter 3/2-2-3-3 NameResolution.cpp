@@ -1,12 +1,12 @@
-#define _CRT_SECURE_NO_WARNINGS         // ÃÖ½Å VC++ ÄÄÆÄÀÏ ½Ã °æ°í ¹æÁö
-#define _WINSOCK_DEPRECATED_NO_WARNINGS // ÃÖ½Å VC++ ÄÄÆÄÀÏ ½Ã °æ°í ¹æÁö
+#define _CRT_SECURE_NO_WARNINGS         // ìµœì‹  VC++ ì»´íŒŒì¼ ì‹œ ê²½ê³  ë°©ì§€
+#define _WINSOCK_DEPRECATED_NO_WARNINGS // ìµœì‹  VC++ ì»´íŒŒì¼ ì‹œ ê²½ê³  ë°©ì§€
 #pragma comment(lib, "ws2_32")
 #include <winsock2.h>
 #include <stdio.h>
 
 #define TESTNAME "www.example.com"
 
-// ¼ÒÄÏ ÇÔ¼ö ¿À·ù Ãâ·Â
+// ì†Œì¼“ í•¨ìˆ˜ ì˜¤ë¥˜ ì¶œë ¥
 void err_display(char *msg)
 {
     LPVOID lpMsgBuf;
@@ -19,7 +19,7 @@ void err_display(char *msg)
     LocalFree(lpMsgBuf);
 }
 
-// µµ¸ÞÀÎ ÀÌ¸§ -> IPv4 ÁÖ¼Ò
+// ë„ë©”ì¸ ì´ë¦„ -> IPv4 ì£¼ì†Œ
 BOOL GetIPAddr(char *name, IN_ADDR *addr)
 {
     HOSTENT *ptr = gethostbyname(name);
@@ -33,7 +33,7 @@ BOOL GetIPAddr(char *name, IN_ADDR *addr)
     return TRUE;
 }
 
-// IPv4 ÁÖ¼Ò -> µµ¸ÞÀÎ ÀÌ¸§
+// IPv4 ì£¼ì†Œ -> ë„ë©”ì¸ ì´ë¦„
 BOOL GetDomainName(IN_ADDR addr, char *name, int namelen)
 {
     HOSTENT *ptr = gethostbyaddr((char *)&addr, sizeof(addr), AF_INET);
@@ -53,19 +53,19 @@ int main(int argc, char *argv[])
     if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
         return 1;
 
-    printf("µµ¸ÞÀÎ ÀÌ¸§(º¯È¯ Àü) = %s\n", TESTNAME);
+    printf("ë„ë©”ì¸ ì´ë¦„(ë³€í™˜ ì „) = %s\n", TESTNAME);
 
-    // µµ¸ÞÀÎ ÀÌ¸§ -> IP ÁÖ¼Ò
+    // ë„ë©”ì¸ ì´ë¦„ -> IP ì£¼ì†Œ
     IN_ADDR addr;
     if (GetIPAddr(TESTNAME, &addr)) {
-        // ¼º°øÀÌ¸é °á°ú Ãâ·Â
-        printf("IP ÁÖ¼Ò(º¯È¯ ÈÄ) = %s\n", inet_ntoa(addr));
+        // ì„±ê³µì´ë©´ ê²°ê³¼ ì¶œë ¥
+        printf("IP ì£¼ì†Œ(ë³€í™˜ í›„) = %s\n", inet_ntoa(addr));
 
-        // IP ÁÖ¼Ò -> µµ¸ÞÀÎ ÀÌ¸§
+        // IP ì£¼ì†Œ -> ë„ë©”ì¸ ì´ë¦„
         char name[256];
         if (GetDomainName(addr, name, sizeof(name))) {
-            // ¼º°øÀÌ¸é °á°ú Ãâ·Â
-            printf("µµ¸ÞÀÎ ÀÌ¸§(´Ù½Ã º¯È¯ ÈÄ) = %s\n", name);
+            // ì„±ê³µì´ë©´ ê²°ê³¼ ì¶œë ¥
+            printf("ë„ë©”ì¸ ì´ë¦„(ë‹¤ì‹œ ë³€í™˜ í›„) = %s\n", name);
         }
     }
 
