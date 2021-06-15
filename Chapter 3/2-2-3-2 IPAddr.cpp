@@ -1,4 +1,4 @@
-#define _WINSOCK_DEPRECATED_NO_WARNINGS // ÃÖ½Å VC++ ÄÄÆÄÀÏ ½Ã °æ°í ¹æÁö
+#define _WINSOCK_DEPRECATED_NO_WARNINGS // ìµœì‹  VC++ ì»´íŒŒì¼ ì‹œ ê²½ê³  ë°©ì§€
 #pragma comment(lib, "ws2_32")
 #include <winsock2.h>
 #include <ws2tcpip.h>
@@ -11,45 +11,45 @@ int main(int argc, char *argv[])
         return 1;
 
     /*----------------*/
-    /* IPv4 º¯È¯ ¿¬½À */
+    /* IPv4 ë³€í™˜ ì—°ìŠµ */
     /*----------------*/
-    // ¿ø·¡ÀÇ IPv4 ÁÖ¼Ò Ãâ·Â
+    // ì›ë˜ì˜ IPv4 ì£¼ì†Œ ì¶œë ¥
     char *ipv4test = "147.46.114.70";
-    printf("IPv4 ÁÖ¼Ò(º¯È¯ Àü) = %s\n", ipv4test);
+    printf("IPv4 ì£¼ì†Œ(ë³€í™˜ ì „) = %s\n", ipv4test);
 
-    // inet_addr() ÇÔ¼ö ¿¬½À
-    printf("IPv4 ÁÖ¼Ò(º¯È¯ ÈÄ) = 0x%x\n", inet_addr(ipv4test));
+    // inet_addr() í•¨ìˆ˜ ì—°ìŠµ
+    printf("IPv4 ì£¼ì†Œ(ë³€í™˜ í›„) = 0x%x\n", inet_addr(ipv4test));
 
-    // inet_ntoa() ÇÔ¼ö ¿¬½À
+    // inet_ntoa() í•¨ìˆ˜ ì—°ìŠµ
     IN_ADDR ipv4num;
     ipv4num.s_addr = inet_addr(ipv4test);
-    printf("IPv4 ÁÖ¼Ò(´Ù½Ã º¯È¯ ÈÄ) = %s\n", inet_ntoa(ipv4num));
+    printf("IPv4 ì£¼ì†Œ(ë‹¤ì‹œ ë³€í™˜ í›„) = %s\n", inet_ntoa(ipv4num));
 
     printf("\n");
 
     /*----------------*/
-    /* IPv6 º¯È¯ ¿¬½À */
+    /* IPv6 ë³€í™˜ ì—°ìŠµ */
     /*----------------*/
-    // ¿ø·¡ÀÇ IPv6 ÁÖ¼Ò Ãâ·Â
+    // ì›ë˜ì˜ IPv6 ì£¼ì†Œ ì¶œë ¥
     char *ipv6test = "2001:0230:abcd:ffab:0023:eb00:ffff:1111";
-    printf("IPv6 ÁÖ¼Ò(º¯È¯ Àü) = %s\n", ipv6test);
+    printf("IPv6 ì£¼ì†Œ(ë³€í™˜ ì „) = %s\n", ipv6test);
 
-    // WSAStringToAddress() ÇÔ¼ö ¿¬½À
+    // WSAStringToAddress() í•¨ìˆ˜ ì—°ìŠµ
     SOCKADDR_IN6 ipv6num;
     int addrlen = sizeof(ipv6num);
     WSAStringToAddress(ipv6test, AF_INET6, NULL,
         (SOCKADDR *)&ipv6num, &addrlen);
-    printf("IPv6 ÁÖ¼Ò(º¯È¯ ÈÄ) = 0x");
+    printf("IPv6 ì£¼ì†Œ(ë³€í™˜ í›„) = 0x");
     for (int i = 0; i < 16; i++)
         printf("%02x", ipv6num.sin6_addr.u.Byte[i]);
     printf("\n");
 
-    // WSAAddressToString() ÇÔ¼ö ¿¬½À
+    // WSAAddressToString() í•¨ìˆ˜ ì—°ìŠµ
     char ipaddr[50];
     DWORD ipaddrlen = sizeof(ipaddr);
     WSAAddressToString((SOCKADDR *)&ipv6num, sizeof(ipv6num),
         NULL, ipaddr, &ipaddrlen);
-    printf("IPv6 ÁÖ¼Ò(´Ù½Ã º¯È¯ ÈÄ) = %s\n", ipaddr);
+    printf("IPv6 ì£¼ì†Œ(ë‹¤ì‹œ ë³€í™˜ í›„) = %s\n", ipaddr);
 
     WSACleanup();
     return 0;
