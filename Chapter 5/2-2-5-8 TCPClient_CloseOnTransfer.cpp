@@ -1,5 +1,5 @@
-#define _CRT_SECURE_NO_WARNINGS         // ÃÖ½Å VC++ ÄÄÆÄÀÏ ½Ã °æ°í ¹æÁö
-#define _WINSOCK_DEPRECATED_NO_WARNINGS // ÃÖ½Å VC++ ÄÄÆÄÀÏ ½Ã °æ°í ¹æÁö
+#define _CRT_SECURE_NO_WARNINGS         // ìµœì‹  VC++ ì»´íŒŒì¼ ì‹œ ê²½ê³  ë°©ì§€
+#define _WINSOCK_DEPRECATED_NO_WARNINGS // ìµœì‹  VC++ ì»´íŒŒì¼ ì‹œ ê²½ê³  ë°©ì§€
 #pragma comment(lib, "ws2_32")
 #include <winsock2.h>
 #include <stdlib.h>
@@ -9,7 +9,7 @@
 #define SERVERPORT 9000
 #define BUFSIZE    50
 
-// ¼ÒÄÏ ÇÔ¼ö ¿À·ù Ãâ·Â ÈÄ Á¾·á
+// ì†Œì¼“ í•¨ìˆ˜ ì˜¤ë¥˜ ì¶œë ¥ í›„ ì¢…ë£Œ
 void err_quit(char *msg)
 {
     LPVOID lpMsgBuf;
@@ -23,7 +23,7 @@ void err_quit(char *msg)
     exit(1);
 }
 
-// ¼ÒÄÏ ÇÔ¼ö ¿À·ù Ãâ·Â
+// ì†Œì¼“ í•¨ìˆ˜ ì˜¤ë¥˜ ì¶œë ¥
 void err_display(char *msg)
 {
     LPVOID lpMsgBuf;
@@ -40,29 +40,29 @@ int main(int argc, char *argv[])
 {
     int retval;
 
-    // À©¼Ó ÃÊ±âÈ­
+    // ìœˆì† ì´ˆê¸°í™”
     WSADATA wsa;
     if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
         return 1;
 
-    // connect() È£Ãâ¿¡ »ç¿ëÇÒ º¯¼ö
+    // connect() í˜¸ì¶œì— ì‚¬ìš©í•  ë³€ìˆ˜
     SOCKADDR_IN serveraddr;
     ZeroMemory(&serveraddr, sizeof(serveraddr));
     serveraddr.sin_family = AF_INET;
     serveraddr.sin_addr.s_addr = inet_addr(SERVERIP);
     serveraddr.sin_port = htons(SERVERPORT);
 
-    // µ¥ÀÌÅÍ Åë½Å¿¡ »ç¿ëÇÒ º¯¼ö
+    // ë°ì´í„° í†µì‹ ì— ì‚¬ìš©í•  ë³€ìˆ˜
     char buf[BUFSIZE];
     char *testdata[] = {
-        "¾È³çÇÏ¼¼¿ä",
-        "¹İ°¡¿ö¿ä",
-        "¿À´Ãµû¶ó ÇÒ ÀÌ¾ß±â°¡ ¸¹À» °Í °°³×¿ä",
-        "Àúµµ ±×·¸³×¿ä",
+        "ì•ˆë…•í•˜ì„¸ìš”",
+        "ë°˜ê°€ì›Œìš”",
+        "ì˜¤ëŠ˜ë”°ë¼ í•  ì´ì•¼ê¸°ê°€ ë§ì„ ê²ƒ ê°™ë„¤ìš”",
+        "ì €ë„ ê·¸ë ‡ë„¤ìš”",
     };
     int len;
 
-    // ¼­¹ö¿Í µ¥ÀÌÅÍ Åë½Å
+    // ì„œë²„ì™€ ë°ì´í„° í†µì‹ 
     for (int i = 0; i < 4; i++) {
         // socket()
         SOCKET sock = socket(AF_INET, SOCK_STREAM, 0);
@@ -72,23 +72,23 @@ int main(int argc, char *argv[])
         retval = connect(sock, (SOCKADDR *)&serveraddr, sizeof(serveraddr));
         if (retval == SOCKET_ERROR) err_quit("connect()");
 
-        // µ¥ÀÌÅÍ ÀÔ·Â(½Ã¹Ä·¹ÀÌ¼Ç)
+        // ë°ì´í„° ì…ë ¥(ì‹œë®¬ë ˆì´ì…˜)
         len = strlen(testdata[i]);
         strncpy(buf, testdata[i], len);
 
-        // µ¥ÀÌÅÍ º¸³»±â
+        // ë°ì´í„° ë³´ë‚´ê¸°
         retval = send(sock, buf, len, 0);
         if (retval == SOCKET_ERROR) {
             err_display("send()");
             break;
         }
-        printf("[TCP Å¬¶óÀÌ¾ğÆ®] %d¹ÙÀÌÆ®¸¦ º¸³Â½À´Ï´Ù.\n", retval);
+        printf("[TCP í´ë¼ì´ì–¸íŠ¸] %dë°”ì´íŠ¸ë¥¼ ë³´ëƒˆìŠµë‹ˆë‹¤.\n", retval);
 
         // closesocket()
         closesocket(sock);
     }
 
-    // À©¼Ó Á¾·á
+    // ìœˆì† ì¢…ë£Œ
     WSACleanup();
     return 0;
 }
