@@ -19,13 +19,13 @@ DWORD WINAPI MyThread(LPVOID arg)
 
 int main(int argc, char *argv[])
 {
-    // Ã¹ ¹øÂ° ½º·¹µå »ı¼º
+    // ì²« ë²ˆì§¸ ìŠ¤ë ˆë“œ ìƒì„±
     Point3D pt1 = { 10, 20, 30 };
     HANDLE hThread1 = CreateThread(NULL, 0, MyThread, &pt1, 0, NULL);
     if (hThread1 == NULL) return 1;
     CloseHandle(hThread1);
 
-    // µÎ ¹øÂ° ½º·¹µå »ı¼º
+    // ë‘ ë²ˆì§¸ ìŠ¤ë ˆë“œ ìƒì„±
     Point3D pt2 = { 40, 50, 60 };
     HANDLE hThread2 = CreateThread(NULL, 0, MyThread, &pt2, 0, NULL);
     if (hThread2 == NULL) return 1;
