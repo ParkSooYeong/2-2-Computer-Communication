@@ -17,10 +17,10 @@ int main(int argc, char *argv[])
         (LPVOID)num, CREATE_SUSPENDED, NULL);
     if (hThread == NULL) return 1;
 
-    printf("½º·¹µå ½ÇÇà Àü. °è»ê °á°ú = %d\n", sum);
+    printf("ìŠ¤ë ˆë“œ ì‹¤í–‰ ì „. ê³„ì‚° ê²°ê³¼ = %d\n", sum);
     ResumeThread(hThread);
     WaitForSingleObject(hThread, INFINITE);
-    printf("½º·¹µå ½ÇÇà ÈÄ. °è»ê °á°ú = %d\n", sum);
+    printf("ìŠ¤ë ˆë“œ ì‹¤í–‰ í›„. ê³„ì‚° ê²°ê³¼ = %d\n", sum);
     CloseHandle(hThread);
 
     return 0;
