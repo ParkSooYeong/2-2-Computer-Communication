@@ -12,15 +12,15 @@ DWORD WINAPI WriteThread(LPVOID arg)
     DWORD retval;
 
     for (int k = 1; k <= 500; k++) {
-        // ÀÐ±â ¿Ï·á ´ë±â
+        // ì½ê¸° ì™„ë£Œ ëŒ€ê¸°
         retval = WaitForSingleObject(hReadEvent, INFINITE);
         if (retval != WAIT_OBJECT_0) break;
 
-        // °øÀ¯ ¹öÆÛ¿¡ µ¥ÀÌÅÍ ÀúÀå
+        // ê³µìœ  ë²„í¼ì— ë°ì´í„° ì €ìž¥
         for (int i = 0; i < BUFSIZE; i++)
             buf[i] = k;
 
-        // ¾²±â ¿Ï·á ¾Ë¸²
+        // ì“°ê¸° ì™„ë£Œ ì•Œë¦¼
         SetEvent(hWriteEvent);
     }
 
@@ -32,20 +32,20 @@ DWORD WINAPI ReadThread(LPVOID arg)
     DWORD retval;
 
     while (1) {
-        // ¾²±â ¿Ï·á ´ë±â
+        // ì“°ê¸° ì™„ë£Œ ëŒ€ê¸°
         retval = WaitForSingleObject(hWriteEvent, INFINITE);
         if (retval != WAIT_OBJECT_0) break;
 
-        // ÀÐÀº µ¥ÀÌÅÍ Ãâ·Â
+        // ì½ì€ ë°ì´í„° ì¶œë ¥
         printf("Thread %4d: ", GetCurrentThreadId());
         for (int i = 0; i < BUFSIZE; i++)
             printf("%3d ", buf[i]);
         printf("\n");
 
-        // ¹öÆÛ ÃÊ±âÈ­
+        // ë²„í¼ ì´ˆê¸°í™”
         ZeroMemory(buf, sizeof(buf));
 
-        // ÀÐ±â ¿Ï·á ¾Ë¸²
+        // ì½ê¸° ì™„ë£Œ ì•Œë¦¼
         SetEvent(hReadEvent);
     }
 
@@ -54,22 +54,22 @@ DWORD WINAPI ReadThread(LPVOID arg)
 
 int main(int argc, char *argv[])
 {
-    // µÎ °³ÀÇ ÀÚµ¿ ¸®¼Â ÀÌº¥Æ® »ý¼º(°¢°¢ ºñ½ÅÈ£, ½ÅÈ£ »óÅÂ)
+    // ë‘ ê°œì˜ ìžë™ ë¦¬ì…‹ ì´ë²¤íŠ¸ ìƒì„±(ê°ê° ë¹„ì‹ í˜¸, ì‹ í˜¸ ìƒíƒœ)
     hWriteEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
     if (hWriteEvent == NULL) return 1;
     hReadEvent = CreateEvent(NULL, FALSE, TRUE, NULL);
     if (hReadEvent == NULL) return 1;
 
-    // ¼¼ °³ÀÇ ½º·¹µå »ý¼º
+    // ì„¸ ê°œì˜ ìŠ¤ë ˆë“œ ìƒì„±
     HANDLE hThread[3];
     hThread[0] = CreateThread(NULL, 0, WriteThread, NULL, 0, NULL);
     hThread[1] = CreateThread(NULL, 0, ReadThread, NULL, 0, NULL);
     hThread[2] = CreateThread(NULL, 0, ReadThread, NULL, 0, NULL);
 
-    // ¼¼ °³ÀÇ ½º·¹µå Á¾·á ´ë±â
+    // ì„¸ ê°œì˜ ìŠ¤ë ˆë“œ ì¢…ë£Œ ëŒ€ê¸°
     WaitForMultipleObjects(3, hThread, TRUE, INFINITE);
 
-    // ÀÌº¥Æ® Á¦°Å
+    // ì´ë²¤íŠ¸ ì œê±°
     CloseHandle(hWriteEvent);
     CloseHandle(hReadEvent);
     return 0;
