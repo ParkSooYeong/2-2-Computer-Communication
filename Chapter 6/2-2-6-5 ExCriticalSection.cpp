@@ -27,17 +27,17 @@ DWORD WINAPI MyThread2(LPVOID arg)
 
 int main(int argc, char *argv[])
 {
-    // ÀÓ°è ¿µ¿ª ÃÊ±âÈ­
+    // ì„ê³„ ì˜ì—­ ì´ˆê¸°í™”
     InitializeCriticalSection(&cs);
-    // µÎ °³ÀÇ ½º·¹µå »ı¼º
+    // ë‘ ê°œì˜ ìŠ¤ë ˆë“œ ìƒì„±
     HANDLE hThread[2];
     hThread[0] = CreateThread(NULL, 0, MyThread1, NULL, 0, NULL);
     hThread[1] = CreateThread(NULL, 0, MyThread2, NULL, 0, NULL);
-    // µÎ °³ÀÇ ½º·¹µå Á¾·á ´ë±â
+    // ë‘ ê°œì˜ ìŠ¤ë ˆë“œ ì¢…ë£Œ ëŒ€ê¸°
     WaitForMultipleObjects(2, hThread, TRUE, INFINITE);
-    // ÀÓ°è ¿µ¿ª »èÁ¦
+    // ì„ê³„ ì˜ì—­ ì‚­ì œ
     DeleteCriticalSection(&cs);
-    // °á°ú Ãâ·Â
+    // ê²°ê³¼ ì¶œë ¥
     printf("g_count = %d\n", g_count);
     return 0;
 }
