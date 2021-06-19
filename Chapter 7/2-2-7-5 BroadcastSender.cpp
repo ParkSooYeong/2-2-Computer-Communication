@@ -1,4 +1,4 @@
-#define _WINSOCK_DEPRECATED_NO_WARNINGS // ÃÖ½Å VC++ ÄÄÆÄÀÏ ½Ã °æ°í ¹æÁö
+#define _WINSOCK_DEPRECATED_NO_WARNINGS // ìµœì‹  VC++ ì»´íŒŒì¼ ì‹œ ê²½ê³  ë°©ì§€
 #pragma comment(lib, "ws2_32")
 #include <winsock2.h>
 #include <stdlib.h>
@@ -8,7 +8,7 @@
 #define REMOTEPORT 9000
 #define BUFSIZE    512
 
-// ¼ÒÄÏ ÇÔ¼ö ¿À·ù Ãâ·Â ÈÄ Á¾·á
+// ì†Œì¼“ í•¨ìˆ˜ ì˜¤ë¥˜ ì¶œë ¥ í›„ ì¢…ë£Œ
 void err_quit(char *msg)
 {
     LPVOID lpMsgBuf;
@@ -22,7 +22,7 @@ void err_quit(char *msg)
     exit(1);
 }
 
-// ¼ÒÄÏ ÇÔ¼ö ¿À·ù Ãâ·Â
+// ì†Œì¼“ í•¨ìˆ˜ ì˜¤ë¥˜ ì¶œë ¥
 void err_display(char *msg)
 {
     LPVOID lpMsgBuf;
@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
 {
     int retval;
 
-    // À©¼Ó ÃÊ±âÈ­
+    // ìœˆì† ì´ˆê¸°í™”
     WSADATA wsa;
     if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
         return 1;
@@ -48,51 +48,51 @@ int main(int argc, char *argv[])
     SOCKET sock = socket(AF_INET, SOCK_DGRAM, 0);
     if (sock == INVALID_SOCKET) err_quit("socket()");
 
-    // ºê·ÎµåÄ³½ºÆÃ È°¼ºÈ­
+    // ë¸Œë¡œë“œìºìŠ¤íŒ… í™œì„±í™”
     BOOL bEnable = TRUE;
     retval = setsockopt(sock, SOL_SOCKET, SO_BROADCAST,
         (char *)&bEnable, sizeof(bEnable));
     if (retval == SOCKET_ERROR) err_quit("setsockopt()");
 
-    // ¼ÒÄÏ ÁÖ¼Ò ±¸Á¶Ã¼ ÃÊ±âÈ­
+    // ì†Œì¼“ ì£¼ì†Œ êµ¬ì¡°ì²´ ì´ˆê¸°í™”
     SOCKADDR_IN remoteaddr;
     ZeroMemory(&remoteaddr, sizeof(remoteaddr));
     remoteaddr.sin_family = AF_INET;
     remoteaddr.sin_addr.s_addr = inet_addr(REMOTEIP);
     remoteaddr.sin_port = htons(REMOTEPORT);
 
-    // µ¥ÀÌÅÍ Åë½Å¿¡ »ç¿ëÇÒ º¯¼ö
+    // ë°ì´í„° í†µì‹ ì— ì‚¬ìš©í•  ë³€ìˆ˜
     char buf[BUFSIZE + 1];
     int len;
 
-    // ºê·ÎµåÄ³½ºÆ® µ¥ÀÌÅÍ º¸³»±â
+    // ë¸Œë¡œë“œìºìŠ¤íŠ¸ ë°ì´í„° ë³´ë‚´ê¸°
     while (1) {
-        // µ¥ÀÌÅÍ ÀÔ·Â
-        printf("\n[º¸³¾ µ¥ÀÌÅÍ] ");
+        // ë°ì´í„° ì…ë ¥
+        printf("\n[ë³´ë‚¼ ë°ì´í„°] ");
         if (fgets(buf, BUFSIZE + 1, stdin) == NULL)
             break;
 
-        // '\n' ¹®ÀÚ Á¦°Å
+        // '\n' ë¬¸ì ì œê±°
         len = strlen(buf);
         if (buf[len - 1] == '\n')
             buf[len - 1] = '\0';
         if (strlen(buf) == 0)
             break;
 
-        // µ¥ÀÌÅÍ º¸³»±â
+        // ë°ì´í„° ë³´ë‚´ê¸°
         retval = sendto(sock, buf, strlen(buf), 0,
             (SOCKADDR *)&remoteaddr, sizeof(remoteaddr));
         if (retval == SOCKET_ERROR) {
             err_display("sendto()");
             continue;
         }
-        printf("[UDP] %d¹ÙÀÌÆ®¸¦ º¸³Â½À´Ï´Ù.\n", retval);
+        printf("[UDP] %dë°”ì´íŠ¸ë¥¼ ë³´ëƒˆìŠµë‹ˆë‹¤.\n", retval);
     }
 
     // closesocket()
     closesocket(sock);
 
-    // À©¼Ó Á¾·á
+    // ìœˆì† ì¢…ë£Œ
     WSACleanup();
     return 0;
 }
