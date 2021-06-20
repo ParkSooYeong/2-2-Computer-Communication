@@ -1,4 +1,4 @@
-#define _WINSOCK_DEPRECATED_NO_WARNINGS // ÃÖ½Å VC++ ÄÄÆÄÀÏ ½Ã °æ°í ¹æÁö
+#define _WINSOCK_DEPRECATED_NO_WARNINGS // ìµœì‹  VC++ ì»´íŒŒì¼ ì‹œ ê²½ê³  ë°©ì§€
 #pragma comment(lib, "ws2_32")
 #include <winsock2.h>
 #include <ws2tcpip.h>
@@ -9,7 +9,7 @@
 #define LOCALPORT   9000
 #define BUFSIZE     512
 
-// ¼ÒÄÏ ÇÔ¼ö ¿À·ù Ãâ·Â ÈÄ Á¾·á
+// ì†Œì¼“ í•¨ìˆ˜ ì˜¤ë¥˜ ì¶œë ¥ í›„ ì¢…ë£Œ
 void err_quit(char *msg)
 {
     LPVOID lpMsgBuf;
@@ -23,7 +23,7 @@ void err_quit(char *msg)
     exit(1);
 }
 
-// ¼ÒÄÏ ÇÔ¼ö ¿À·ù Ãâ·Â
+// ì†Œì¼“ í•¨ìˆ˜ ì˜¤ë¥˜ ì¶œë ¥
 void err_display(char *msg)
 {
     LPVOID lpMsgBuf;
@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
 {
     int retval;
 
-    // À©¼Ó ÃÊ±âÈ­
+    // ìœˆì† ì´ˆê¸°í™”
     WSADATA wsa;
     if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
         return 1;
@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
     SOCKET sock = socket(AF_INET, SOCK_DGRAM, 0);
     if (sock == INVALID_SOCKET) err_quit("socket()");
 
-    // SO_REUSEADDR ¿É¼Ç ¼³Á¤
+    // SO_REUSEADDR ì˜µì…˜ ì„¤ì •
     BOOL optval = TRUE;
     retval = setsockopt(sock, SOL_SOCKET,
         SO_REUSEADDR, (char *)&optval, sizeof(optval));
@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
     retval = bind(sock, (SOCKADDR *)&localaddr, sizeof(localaddr));
     if (retval == SOCKET_ERROR) err_quit("bind()");
 
-    // ¸ÖÆ¼Ä³½ºÆ® ±×·ì °¡ÀÔ
+    // ë©€í‹°ìºìŠ¤íŠ¸ ê·¸ë£¹ ê°€ì…
     struct ip_mreq mreq;
     mreq.imr_multiaddr.s_addr = inet_addr(MULTICASTIP);
     mreq.imr_interface.s_addr = htonl(INADDR_ANY);
@@ -72,14 +72,14 @@ int main(int argc, char *argv[])
         (char *)&mreq, sizeof(mreq));
     if (retval == SOCKET_ERROR) err_quit("setsockopt()");
 
-    // µ¥ÀÌÅÍ Åë½Å¿¡ »ç¿ëÇÒ º¯¼ö
+    // ë°ì´í„° í†µì‹ ì— ì‚¬ìš©í•  ë³€ìˆ˜
     SOCKADDR_IN peeraddr;
     int addrlen;
     char buf[BUFSIZE + 1];
 
-    // ¸ÖÆ¼Ä³½ºÆ® µ¥ÀÌÅÍ ¹Ş±â
+    // ë©€í‹°ìºìŠ¤íŠ¸ ë°ì´í„° ë°›ê¸°
     while (1) {
-        // µ¥ÀÌÅÍ ¹Ş±â
+        // ë°ì´í„° ë°›ê¸°
         addrlen = sizeof(peeraddr);
         retval = recvfrom(sock, buf, BUFSIZE, 0,
             (SOCKADDR *)&peeraddr, &addrlen);
@@ -88,13 +88,13 @@ int main(int argc, char *argv[])
             continue;
         }
 
-        // ¹ŞÀº µ¥ÀÌÅÍ Ãâ·Â
+        // ë°›ì€ ë°ì´í„° ì¶œë ¥
         buf[retval] = '\0';
         printf("[UDP/%s:%d] %s\n", inet_ntoa(peeraddr.sin_addr),
             ntohs(peeraddr.sin_port), buf);
     }
 
-    // ¸ÖÆ¼Ä³½ºÆ® ±×·ì Å»Åğ
+    // ë©€í‹°ìºìŠ¤íŠ¸ ê·¸ë£¹ íƒˆí‡´
     retval = setsockopt(sock, IPPROTO_IP, IP_DROP_MEMBERSHIP,
         (char *)&mreq, sizeof(mreq));
     if (retval == SOCKET_ERROR) err_quit("setsockopt()");
@@ -102,7 +102,7 @@ int main(int argc, char *argv[])
     // closesocket()
     closesocket(sock);
 
-    // À©¼Ó Á¾·á
+    // ìœˆì† ì¢…ë£Œ
     WSACleanup();
     return 0;
 }
