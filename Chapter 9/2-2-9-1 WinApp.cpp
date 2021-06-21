@@ -1,21 +1,21 @@
-#define _CRT_SECURE_NO_WARNINGS // ÃÖ½Å VC++ ÄÄÆÄÀÏ ½Ã °æ°í ¹æÁö
+#define _CRT_SECURE_NO_WARNINGS // ìµœì‹  VC++ ì»´íŒŒì¼ ì‹œ ê²½ê³  ë°©ì§€
 #include <windows.h>
 #include <stdio.h>
 
-// À©µµ¿ì ÇÁ·Î½ÃÀú
+// ìœˆë„ìš° í”„ë¡œì‹œì €
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
-// ÆíÁı ÄÁÆ®·Ñ Ãâ·Â ÇÔ¼ö
+// í¸ì§‘ ì»¨íŠ¸ë¡¤ ì¶œë ¥ í•¨ìˆ˜
 void DisplayText(char *fmt, ...);
 
-HINSTANCE hInst; // ÀÎ½ºÅÏ½º ÇÚµé
-HWND hEdit; // ÆíÁı ÄÁÆ®·Ñ
+HINSTANCE hInst; // ì¸ìŠ¤í„´ìŠ¤ í•¸ë“¤
+HWND hEdit; // í¸ì§‘ ì»¨íŠ¸ë¡¤
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     LPSTR lpCmdLine, int nCmdShow)
 {
     hInst = hInstance;
 
-    // À©µµ¿ì Å¬·¡½º µî·Ï
+    // ìœˆë„ìš° í´ë˜ìŠ¤ ë“±ë¡
     WNDCLASS wndclass;
     wndclass.style = CS_HREDRAW | CS_VREDRAW;
     wndclass.lpfnWndProc = WndProc;
@@ -29,14 +29,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     wndclass.lpszClassName = "MyWndClass";
     if (!RegisterClass(&wndclass)) return 1;
 
-    // À©µµ¿ì »ı¼º
+    // ìœˆë„ìš° ìƒì„±
     HWND hWnd = CreateWindow("MyWndClass", "WinApp", WS_OVERLAPPEDWINDOW,
         0, 0, 600, 200, NULL, NULL, hInstance, NULL);
     if (hWnd == NULL) return 1;
     ShowWindow(hWnd, nCmdShow);
     UpdateWindow(hWnd);
 
-    // ¸Ş½ÃÁö ·çÇÁ
+    // ë©”ì‹œì§€ ë£¨í”„
     MSG msg;
     while (GetMessage(&msg, 0, 0, 0) > 0) {
         TranslateMessage(&msg);
@@ -45,7 +45,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     return msg.wParam;
 }
 
-// À©µµ¿ì ÇÁ·Î½ÃÀú
+// ìœˆë„ìš° í”„ë¡œì‹œì €
 LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     switch (uMsg) {
@@ -55,8 +55,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             WS_VSCROLL | ES_AUTOHSCROLL |
             ES_AUTOVSCROLL | ES_MULTILINE,
             0, 0, 0, 0, hWnd, (HMENU)100, hInst, NULL);
-        DisplayText("°£´ÜÇÑ GUI ÀÀ¿ë ÇÁ·Î±×·¥ÀÔ´Ï´Ù.\r\n");
-        DisplayText("ÀÎ½ºÅÏ½º ÇÚµé°ªÀº %#xÀÔ´Ï´Ù.\r\n", hInst);
+        DisplayText("ê°„ë‹¨í•œ GUI ì‘ìš© í”„ë¡œê·¸ë¨ì…ë‹ˆë‹¤.\r\n");
+        DisplayText("ì¸ìŠ¤í„´ìŠ¤ í•¸ë“¤ê°’ì€ %#xì…ë‹ˆë‹¤.\r\n", hInst);
         return 0;
     case WM_SIZE:
         MoveWindow(hEdit, 0, 0, LOWORD(lParam), HIWORD(lParam), TRUE);
@@ -71,7 +71,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
 
-// ÆíÁı ÄÁÆ®·Ñ Ãâ·Â ÇÔ¼ö
+// í¸ì§‘ ì»¨íŠ¸ë¡¤ ì¶œë ¥ í•¨ìˆ˜
 void DisplayText(char *fmt, ...)
 {
     va_list arg;
