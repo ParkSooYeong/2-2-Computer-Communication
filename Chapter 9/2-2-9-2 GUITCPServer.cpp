@@ -1,5 +1,5 @@
-#define _CRT_SECURE_NO_WARNINGS         // ÃÖ½Å VC++ ÄÄÆÄÀÏ ½Ã °æ°í ¹æÁö
-#define _WINSOCK_DEPRECATED_NO_WARNINGS // ÃÖ½Å VC++ ÄÄÆÄÀÏ ½Ã °æ°í ¹æÁö
+#define _CRT_SECURE_NO_WARNINGS         // ìµœì‹  VC++ ì»´íŒŒì¼ ì‹œ ê²½ê³  ë°©ì§€
+#define _WINSOCK_DEPRECATED_NO_WARNINGS // ìµœì‹  VC++ ì»´íŒŒì¼ ì‹œ ê²½ê³  ë°©ì§€
 #pragma comment(lib, "ws2_32")
 #include <winsock2.h>
 #include <stdlib.h>
@@ -8,20 +8,20 @@
 #define SERVERPORT 9000
 #define BUFSIZE    512
 
-// À©µµ¿ì ÇÁ·Î½ÃÀú
+// ìœˆë„ìš° í”„ë¡œì‹œì €
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
-// ÆíÁı ÄÁÆ®·Ñ Ãâ·Â ÇÔ¼ö
+// í¸ì§‘ ì»¨íŠ¸ë¡¤ ì¶œë ¥ í•¨ìˆ˜
 void DisplayText(char *fmt, ...);
-// ¿À·ù Ãâ·Â ÇÔ¼ö
+// ì˜¤ë¥˜ ì¶œë ¥ í•¨ìˆ˜
 void err_quit(char *msg);
 void err_display(char *msg);
-// ¼ÒÄÏ Åë½Å ½º·¹µå ÇÔ¼ö
+// ì†Œì¼“ í†µì‹  ìŠ¤ë ˆë“œ í•¨ìˆ˜
 DWORD WINAPI ServerMain(LPVOID arg);
 DWORD WINAPI ProcessClient(LPVOID arg);
 
-HINSTANCE hInst; // ÀÎ½ºÅÏ½º ÇÚµé
-HWND hEdit; // ÆíÁı ÄÁÆ®·Ñ
-CRITICAL_SECTION cs; // ÀÓ°è ¿µ¿ª
+HINSTANCE hInst; // ì¸ìŠ¤í„´ìŠ¤ í•¸ë“¤
+HWND hEdit; // í¸ì§‘ ì»¨íŠ¸ë¡¤
+CRITICAL_SECTION cs; // ì„ê³„ ì˜ì—­
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     LPSTR lpCmdLine, int nCmdShow)
@@ -29,7 +29,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     hInst = hInstance;
     InitializeCriticalSection(&cs);
 
-    // À©µµ¿ì Å¬·¡½º µî·Ï
+    // ìœˆë„ìš° í´ë˜ìŠ¤ ë“±ë¡
     WNDCLASS wndclass;
     wndclass.style = CS_HREDRAW | CS_VREDRAW;
     wndclass.lpfnWndProc = WndProc;
@@ -43,17 +43,17 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     wndclass.lpszClassName = "MyWndClass";
     if (!RegisterClass(&wndclass)) return 1;
 
-    // À©µµ¿ì »ı¼º
-    HWND hWnd = CreateWindow("MyWndClass", "TCP ¼­¹ö", WS_OVERLAPPEDWINDOW,
+    // ìœˆë„ìš° ìƒì„±
+    HWND hWnd = CreateWindow("MyWndClass", "TCP ì„œë²„", WS_OVERLAPPEDWINDOW,
         0, 0, 600, 200, NULL, NULL, hInstance, NULL);
     if (hWnd == NULL) return 1;
     ShowWindow(hWnd, nCmdShow);
     UpdateWindow(hWnd);
 
-    // ¼ÒÄÏ Åë½Å ½º·¹µå »ı¼º
+    // ì†Œì¼“ í†µì‹  ìŠ¤ë ˆë“œ ìƒì„±
     CreateThread(NULL, 0, ServerMain, NULL, 0, NULL);
 
-    // ¸Ş½ÃÁö ·çÇÁ
+    // ë©”ì‹œì§€ ë£¨í”„
     MSG msg;
     while (GetMessage(&msg, 0, 0, 0) > 0) {
         TranslateMessage(&msg);
@@ -63,7 +63,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     return msg.wParam;
 }
 
-// À©µµ¿ì ÇÁ·Î½ÃÀú
+// ìœˆë„ìš° í”„ë¡œì‹œì €
 LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     switch (uMsg) {
@@ -87,7 +87,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
 
-// ÆíÁı ÄÁÆ®·Ñ Ãâ·Â ÇÔ¼ö
+// í¸ì§‘ ì»¨íŠ¸ë¡¤ ì¶œë ¥ í•¨ìˆ˜
 void DisplayText(char *fmt, ...)
 {
     va_list arg;
@@ -105,7 +105,7 @@ void DisplayText(char *fmt, ...)
     va_end(arg);
 }
 
-// ¼ÒÄÏ ÇÔ¼ö ¿À·ù Ãâ·Â ÈÄ Á¾·á
+// ì†Œì¼“ í•¨ìˆ˜ ì˜¤ë¥˜ ì¶œë ¥ í›„ ì¢…ë£Œ
 void err_quit(char *msg)
 {
     LPVOID lpMsgBuf;
@@ -119,7 +119,7 @@ void err_quit(char *msg)
     exit(1);
 }
 
-// ¼ÒÄÏ ÇÔ¼ö ¿À·ù Ãâ·Â
+// ì†Œì¼“ í•¨ìˆ˜ ì˜¤ë¥˜ ì¶œë ¥
 void err_display(char *msg)
 {
     LPVOID lpMsgBuf;
@@ -132,12 +132,12 @@ void err_display(char *msg)
     LocalFree(lpMsgBuf);
 }
 
-// TCP ¼­¹ö ½ÃÀÛ ºÎºĞ
+// TCP ì„œë²„ ì‹œì‘ ë¶€ë¶„
 DWORD WINAPI ServerMain(LPVOID arg)
 {
     int retval;
 
-    // À©¼Ó ÃÊ±âÈ­
+    // ìœˆì† ì´ˆê¸°í™”
     WSADATA wsa;
     if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
         return 1;
@@ -159,7 +159,7 @@ DWORD WINAPI ServerMain(LPVOID arg)
     retval = listen(listen_sock, SOMAXCONN);
     if (retval == SOCKET_ERROR) err_quit("listen()");
 
-    // µ¥ÀÌÅÍ Åë½Å¿¡ »ç¿ëÇÒ º¯¼ö
+    // ë°ì´í„° í†µì‹ ì— ì‚¬ìš©í•  ë³€ìˆ˜
     SOCKET client_sock;
     SOCKADDR_IN clientaddr;
     int addrlen;
@@ -174,11 +174,11 @@ DWORD WINAPI ServerMain(LPVOID arg)
             break;
         }
 
-        // Á¢¼ÓÇÑ Å¬¶óÀÌ¾ğÆ® Á¤º¸ Ãâ·Â
-        DisplayText("\r\n[TCP ¼­¹ö] Å¬¶óÀÌ¾ğÆ® Á¢¼Ó: IP ÁÖ¼Ò=%s, Æ÷Æ® ¹øÈ£=%d\r\n",
+        // ì ‘ì†í•œ í´ë¼ì´ì–¸íŠ¸ ì •ë³´ ì¶œë ¥
+        DisplayText("\r\n[TCP ì„œë²„] í´ë¼ì´ì–¸íŠ¸ ì ‘ì†: IP ì£¼ì†Œ=%s, í¬íŠ¸ ë²ˆí˜¸=%d\r\n",
             inet_ntoa(clientaddr.sin_addr), ntohs(clientaddr.sin_port));
 
-        // ½º·¹µå »ı¼º
+        // ìŠ¤ë ˆë“œ ìƒì„±
         hThread = CreateThread(NULL, 0, ProcessClient,
             (LPVOID)client_sock, 0, NULL);
         if (hThread == NULL) { closesocket(client_sock); }
@@ -188,12 +188,12 @@ DWORD WINAPI ServerMain(LPVOID arg)
     // closesocket()
     closesocket(listen_sock);
 
-    // À©¼Ó Á¾·á
+    // ìœˆì† ì¢…ë£Œ
     WSACleanup();
     return 0;
 }
 
-// Å¬¶óÀÌ¾ğÆ®¿Í µ¥ÀÌÅÍ Åë½Å
+// í´ë¼ì´ì–¸íŠ¸ì™€ ë°ì´í„° í†µì‹ 
 DWORD WINAPI ProcessClient(LPVOID arg)
 {
     SOCKET client_sock = (SOCKET)arg;
@@ -202,12 +202,12 @@ DWORD WINAPI ProcessClient(LPVOID arg)
     int addrlen;
     char buf[BUFSIZE + 1];
 
-    // Å¬¶óÀÌ¾ğÆ® Á¤º¸ ¾ò±â
+    // í´ë¼ì´ì–¸íŠ¸ ì •ë³´ ì–»ê¸°
     addrlen = sizeof(clientaddr);
     getpeername(client_sock, (SOCKADDR *)&clientaddr, &addrlen);
 
     while (1) {
-        // µ¥ÀÌÅÍ ¹Ş±â
+        // ë°ì´í„° ë°›ê¸°
         retval = recv(client_sock, buf, BUFSIZE, 0);
         if (retval == SOCKET_ERROR) {
             err_display("recv()");
@@ -216,12 +216,12 @@ DWORD WINAPI ProcessClient(LPVOID arg)
         else if (retval == 0)
             break;
 
-        // ¹ŞÀº µ¥ÀÌÅÍ Ãâ·Â
+        // ë°›ì€ ë°ì´í„° ì¶œë ¥
         buf[retval] = '\0';
         DisplayText("[TCP/%s:%d] %s\r\n", inet_ntoa(clientaddr.sin_addr),
             ntohs(clientaddr.sin_port), buf);
 
-        // µ¥ÀÌÅÍ º¸³»±â
+        // ë°ì´í„° ë³´ë‚´ê¸°
         retval = send(client_sock, buf, retval, 0);
         if (retval == SOCKET_ERROR) {
             err_display("send()");
@@ -231,7 +231,7 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 
     // closesocket()
     closesocket(client_sock);
-    DisplayText("[TCP ¼­¹ö] Å¬¶óÀÌ¾ğÆ® Á¾·á: IP ÁÖ¼Ò=%s, Æ÷Æ® ¹øÈ£=%d\r\n",
+    DisplayText("[TCP ì„œë²„] í´ë¼ì´ì–¸íŠ¸ ì¢…ë£Œ: IP ì£¼ì†Œ=%s, í¬íŠ¸ ë²ˆí˜¸=%d\r\n",
         inet_ntoa(clientaddr.sin_addr), ntohs(clientaddr.sin_port));
 
     return 0;
