@@ -1,26 +1,26 @@
-#define _CRT_SECURE_NO_WARNINGS         // ÃÖ½Å VC++ ÄÄÆÄÀÏ ½Ã °æ°í ¹æÁö
+#define _CRT_SECURE_NO_WARNINGS         // ìµœì‹  VC++ ì»´íŒŒì¼ ì‹œ ê²½ê³  ë°©ì§€
 #include <windows.h>
 #include <stdio.h>
 #include "resource.h"
 
 #define BUFSIZE 25
 
-// ´ëÈ­»óÀÚ ÇÁ·Î½ÃÀú
+// ëŒ€í™”ìƒì í”„ë¡œì‹œì €
 BOOL CALLBACK DlgProc(HWND, UINT, WPARAM, LPARAM);
-// ÆíÁı ÄÁÆ®·Ñ Ãâ·Â ÇÔ¼ö
+// í¸ì§‘ ì»¨íŠ¸ë¡¤ ì¶œë ¥ í•¨ìˆ˜
 void DisplayText(char *fmt, ...);
 
-HWND hEdit1, hEdit2; // ÆíÁı ÄÁÆ®·Ñ
+HWND hEdit1, hEdit2; // í¸ì§‘ ì»¨íŠ¸ë¡¤
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     LPSTR lpCmdLine, int nCmdShow)
 {
-    // ´ëÈ­»óÀÚ »ı¼º
+    // ëŒ€í™”ìƒì ìƒì„±
     DialogBox(hInstance, MAKEINTRESOURCE(IDD_DIALOG1), NULL, DlgProc);
     return 0;
 }
 
-// ´ëÈ­»óÀÚ ÇÁ·Î½ÃÀú
+// ëŒ€í™”ìƒì í”„ë¡œì‹œì €
 BOOL CALLBACK DlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     static char buf[BUFSIZE + 1];
@@ -48,7 +48,7 @@ BOOL CALLBACK DlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
     return FALSE;
 }
 
-// ÆíÁı ÄÁÆ®·Ñ Ãâ·Â ÇÔ¼ö
+// í¸ì§‘ ì»¨íŠ¸ë¡¤ ì¶œë ¥ í•¨ìˆ˜
 void DisplayText(char *fmt, ...)
 {
     va_list arg;
