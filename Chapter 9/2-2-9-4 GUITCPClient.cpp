@@ -1,5 +1,5 @@
-#define _CRT_SECURE_NO_WARNINGS         // ÃÖ½Å VC++ ÄÄÆÄÀÏ ½Ã °æ°í ¹æÁö
-#define _WINSOCK_DEPRECATED_NO_WARNINGS // ÃÖ½Å VC++ ÄÄÆÄÀÏ ½Ã °æ°í ¹æÁö
+#define _CRT_SECURE_NO_WARNINGS         // ìµœì‹  VC++ ì»´íŒŒì¼ ì‹œ ê²½ê³  ë°©ì§€
+#define _WINSOCK_DEPRECATED_NO_WARNINGS // ìµœì‹  VC++ ì»´íŒŒì¼ ì‹œ ê²½ê³  ë°©ì§€
 #pragma comment(lib, "ws2_32")
 #include <winsock2.h>
 #include <stdlib.h>
@@ -10,52 +10,52 @@
 #define SERVERPORT 9000
 #define BUFSIZE    512
 
-// ´ëÈ­»óÀÚ ÇÁ·Î½ÃÀú
+// ëŒ€í™”ìƒì í”„ë¡œì‹œì €
 BOOL CALLBACK DlgProc(HWND, UINT, WPARAM, LPARAM);
-// ÆíÁı ÄÁÆ®·Ñ Ãâ·Â ÇÔ¼ö
+// í¸ì§‘ ì»¨íŠ¸ë¡¤ ì¶œë ¥ í•¨ìˆ˜
 void DisplayText(char *fmt, ...);
-// ¿À·ù Ãâ·Â ÇÔ¼ö
+// ì˜¤ë¥˜ ì¶œë ¥ í•¨ìˆ˜
 void err_quit(char *msg);
 void err_display(char *msg);
-// »ç¿ëÀÚ Á¤ÀÇ µ¥ÀÌÅÍ ¼ö½Å ÇÔ¼ö
+// ì‚¬ìš©ì ì •ì˜ ë°ì´í„° ìˆ˜ì‹  í•¨ìˆ˜
 int recvn(SOCKET s, char *buf, int len, int flags);
-// ¼ÒÄÏ Åë½Å ½º·¹µå ÇÔ¼ö
+// ì†Œì¼“ í†µì‹  ìŠ¤ë ˆë“œ í•¨ìˆ˜
 DWORD WINAPI ClientMain(LPVOID arg);
 
-SOCKET sock; // ¼ÒÄÏ
-char buf[BUFSIZE + 1]; // µ¥ÀÌÅÍ ¼Û¼ö½Å ¹öÆÛ
-HANDLE hReadEvent, hWriteEvent; // ÀÌº¥Æ®
-HWND hSendButton; // º¸³»±â ¹öÆ°
-HWND hEdit1, hEdit2; // ÆíÁı ÄÁÆ®·Ñ
+SOCKET sock; // ì†Œì¼“
+char buf[BUFSIZE + 1]; // ë°ì´í„° ì†¡ìˆ˜ì‹  ë²„í¼
+HANDLE hReadEvent, hWriteEvent; // ì´ë²¤íŠ¸
+HWND hSendButton; // ë³´ë‚´ê¸° ë²„íŠ¼
+HWND hEdit1, hEdit2; // í¸ì§‘ ì»¨íŠ¸ë¡¤
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     LPSTR lpCmdLine, int nCmdShow)
 {
-    // ÀÌº¥Æ® »ı¼º
+    // ì´ë²¤íŠ¸ ìƒì„±
     hReadEvent = CreateEvent(NULL, FALSE, TRUE, NULL);
     if (hReadEvent == NULL) return 1;
     hWriteEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
     if (hWriteEvent == NULL) return 1;
 
-    // ¼ÒÄÏ Åë½Å ½º·¹µå »ı¼º
+    // ì†Œì¼“ í†µì‹  ìŠ¤ë ˆë“œ ìƒì„±
     CreateThread(NULL, 0, ClientMain, NULL, 0, NULL);
 
-    // ´ëÈ­»óÀÚ »ı¼º
+    // ëŒ€í™”ìƒì ìƒì„±
     DialogBox(hInstance, MAKEINTRESOURCE(IDD_DIALOG1), NULL, DlgProc);
 
-    // ÀÌº¥Æ® Á¦°Å
+    // ì´ë²¤íŠ¸ ì œê±°
     CloseHandle(hReadEvent);
     CloseHandle(hWriteEvent);
 
     // closesocket()
     closesocket(sock);
 
-    // À©¼Ó Á¾·á
+    // ìœˆì† ì¢…ë£Œ
     WSACleanup();
     return 0;
 }
 
-// ´ëÈ­»óÀÚ ÇÁ·Î½ÃÀú
+// ëŒ€í™”ìƒì í”„ë¡œì‹œì €
 BOOL CALLBACK DlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     switch (uMsg) {
@@ -68,10 +68,10 @@ BOOL CALLBACK DlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
     case WM_COMMAND:
         switch (LOWORD(wParam)) {
         case IDOK:
-            EnableWindow(hSendButton, FALSE); // º¸³»±â ¹öÆ° ºñÈ°¼ºÈ­
-            WaitForSingleObject(hReadEvent, INFINITE); // ÀĞ±â ¿Ï·á ±â´Ù¸®±â
+            EnableWindow(hSendButton, FALSE); // ë³´ë‚´ê¸° ë²„íŠ¼ ë¹„í™œì„±í™”
+            WaitForSingleObject(hReadEvent, INFINITE); // ì½ê¸° ì™„ë£Œ ê¸°ë‹¤ë¦¬ê¸°
             GetDlgItemText(hDlg, IDC_EDIT1, buf, BUFSIZE + 1);
-            SetEvent(hWriteEvent); // ¾²±â ¿Ï·á ¾Ë¸®±â
+            SetEvent(hWriteEvent); // ì“°ê¸° ì™„ë£Œ ì•Œë¦¬ê¸°
             SetFocus(hEdit1);
             SendMessage(hEdit1, EM_SETSEL, 0, -1);
             return TRUE;
@@ -84,7 +84,7 @@ BOOL CALLBACK DlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
     return FALSE;
 }
 
-// ÆíÁı ÄÁÆ®·Ñ Ãâ·Â ÇÔ¼ö
+// í¸ì§‘ ì»¨íŠ¸ë¡¤ ì¶œë ¥ í•¨ìˆ˜
 void DisplayText(char *fmt, ...)
 {
     va_list arg;
@@ -100,7 +100,7 @@ void DisplayText(char *fmt, ...)
     va_end(arg);
 }
 
-// ¼ÒÄÏ ÇÔ¼ö ¿À·ù Ãâ·Â ÈÄ Á¾·á
+// ì†Œì¼“ í•¨ìˆ˜ ì˜¤ë¥˜ ì¶œë ¥ í›„ ì¢…ë£Œ
 void err_quit(char *msg)
 {
     LPVOID lpMsgBuf;
@@ -114,7 +114,7 @@ void err_quit(char *msg)
     exit(1);
 }
 
-// ¼ÒÄÏ ÇÔ¼ö ¿À·ù Ãâ·Â
+// ì†Œì¼“ í•¨ìˆ˜ ì˜¤ë¥˜ ì¶œë ¥
 void err_display(char *msg)
 {
     LPVOID lpMsgBuf;
@@ -127,7 +127,7 @@ void err_display(char *msg)
     LocalFree(lpMsgBuf);
 }
 
-// »ç¿ëÀÚ Á¤ÀÇ µ¥ÀÌÅÍ ¼ö½Å ÇÔ¼ö
+// ì‚¬ìš©ì ì •ì˜ ë°ì´í„° ìˆ˜ì‹  í•¨ìˆ˜
 int recvn(SOCKET s, char *buf, int len, int flags)
 {
     int received;
@@ -147,12 +147,12 @@ int recvn(SOCKET s, char *buf, int len, int flags)
     return (len - left);
 }
 
-// TCP Å¬¶óÀÌ¾ğÆ® ½ÃÀÛ ºÎºĞ
+// TCP í´ë¼ì´ì–¸íŠ¸ ì‹œì‘ ë¶€ë¶„
 DWORD WINAPI ClientMain(LPVOID arg)
 {
     int retval;
 
-    // À©¼Ó ÃÊ±âÈ­
+    // ìœˆì† ì´ˆê¸°í™”
     WSADATA wsa;
     if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
         return 1;
@@ -170,26 +170,26 @@ DWORD WINAPI ClientMain(LPVOID arg)
     retval = connect(sock, (SOCKADDR *)&serveraddr, sizeof(serveraddr));
     if (retval == SOCKET_ERROR) err_quit("connect()");
 
-    // ¼­¹ö¿Í µ¥ÀÌÅÍ Åë½Å
+    // ì„œë²„ì™€ ë°ì´í„° í†µì‹ 
     while (1) {
-        WaitForSingleObject(hWriteEvent, INFINITE); // ¾²±â ¿Ï·á ±â´Ù¸®±â
+        WaitForSingleObject(hWriteEvent, INFINITE); // ì“°ê¸° ì™„ë£Œ ê¸°ë‹¤ë¦¬ê¸°
 
-        // ¹®ÀÚ¿­ ±æÀÌ°¡ 0ÀÌ¸é º¸³»Áö ¾ÊÀ½
+        // ë¬¸ìì—´ ê¸¸ì´ê°€ 0ì´ë©´ ë³´ë‚´ì§€ ì•ŠìŒ
         if (strlen(buf) == 0) {
-            EnableWindow(hSendButton, TRUE); // º¸³»±â ¹öÆ° È°¼ºÈ­
-            SetEvent(hReadEvent); // ÀĞ±â ¿Ï·á ¾Ë¸®±â
+            EnableWindow(hSendButton, TRUE); // ë³´ë‚´ê¸° ë²„íŠ¼ í™œì„±í™”
+            SetEvent(hReadEvent); // ì½ê¸° ì™„ë£Œ ì•Œë¦¬ê¸°
             continue;
         }
 
-        // µ¥ÀÌÅÍ º¸³»±â
+        // ë°ì´í„° ë³´ë‚´ê¸°
         retval = send(sock, buf, strlen(buf), 0);
         if (retval == SOCKET_ERROR) {
             err_display("send()");
             break;
         }
-        DisplayText("[TCP Å¬¶óÀÌ¾ğÆ®] %d¹ÙÀÌÆ®¸¦ º¸³Â½À´Ï´Ù.\r\n", retval);
+        DisplayText("[TCP í´ë¼ì´ì–¸íŠ¸] %dë°”ì´íŠ¸ë¥¼ ë³´ëƒˆìŠµë‹ˆë‹¤.\r\n", retval);
 
-        // µ¥ÀÌÅÍ ¹Ş±â
+        // ë°ì´í„° ë°›ê¸°
         retval = recvn(sock, buf, retval, 0);
         if (retval == SOCKET_ERROR) {
             err_display("recv()");
@@ -198,13 +198,13 @@ DWORD WINAPI ClientMain(LPVOID arg)
         else if (retval == 0)
             break;
 
-        // ¹ŞÀº µ¥ÀÌÅÍ Ãâ·Â
+        // ë°›ì€ ë°ì´í„° ì¶œë ¥
         buf[retval] = '\0';
-        DisplayText("[TCP Å¬¶óÀÌ¾ğÆ®] %d¹ÙÀÌÆ®¸¦ ¹Ş¾Ò½À´Ï´Ù.\r\n", retval);
-        DisplayText("[¹ŞÀº µ¥ÀÌÅÍ] %s\r\n", buf);
+        DisplayText("[TCP í´ë¼ì´ì–¸íŠ¸] %dë°”ì´íŠ¸ë¥¼ ë°›ì•˜ìŠµë‹ˆë‹¤.\r\n", retval);
+        DisplayText("[ë°›ì€ ë°ì´í„°] %s\r\n", buf);
 
-        EnableWindow(hSendButton, TRUE); // º¸³»±â ¹öÆ° È°¼ºÈ­
-        SetEvent(hReadEvent); // ÀĞ±â ¿Ï·á ¾Ë¸®±â
+        EnableWindow(hSendButton, TRUE); // ë³´ë‚´ê¸° ë²„íŠ¼ í™œì„±í™”
+        SetEvent(hReadEvent); // ì½ê¸° ì™„ë£Œ ì•Œë¦¬ê¸°
     }
 
     return 0;
