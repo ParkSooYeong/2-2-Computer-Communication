@@ -1,4 +1,4 @@
-#define _WINSOCK_DEPRECATED_NO_WARNINGS // ÃÖ½Å VC++ ÄÄÆÄÀÏ ½Ã °æ°í ¹æÁö
+#define _WINSOCK_DEPRECATED_NO_WARNINGS // ìµœì‹  VC++ ì»´íŒŒì¼ ì‹œ ê²½ê³  ë°©ì§€
 #pragma comment(lib, "ws2_32")
 #include <winsock2.h>
 #include <stdlib.h>
@@ -7,7 +7,7 @@
 #define SERVERPORT 9000
 #define BUFSIZE    512
 
-// ¼ÒÄÏ Á¤º¸ ÀúÀåÀ» À§ÇÑ ±¸Á¶Ã¼¿Í º¯¼ö
+// ì†Œì¼“ ì •ë³´ ì €ì¥ì„ ìœ„í•œ êµ¬ì¡°ì²´ì™€ ë³€ìˆ˜
 struct SOCKETINFO
 {
     SOCKET sock;
@@ -20,11 +20,11 @@ int nTotalSockets = 0;
 SOCKETINFO *SocketInfoArray[WSA_MAXIMUM_WAIT_EVENTS];
 WSAEVENT EventArray[WSA_MAXIMUM_WAIT_EVENTS];
 
-// ¼ÒÄÏ °ü¸® ÇÔ¼ö
+// ì†Œì¼“ ê´€ë¦¬ í•¨ìˆ˜
 BOOL AddSocketInfo(SOCKET sock);
 void RemoveSocketInfo(int nIndex);
 
-// ¿À·ù Ãâ·Â ÇÔ¼ö
+// ì˜¤ë¥˜ ì¶œë ¥ í•¨ìˆ˜
 void err_quit(char *msg);
 void err_display(char *msg);
 void err_display(int errcode);
@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
 {
     int retval;
 
-    // À©¼Ó ÃÊ±âÈ­
+    // ìœˆì† ì´ˆê¸°í™”
     WSADATA wsa;
     if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
         return 1;
@@ -55,31 +55,31 @@ int main(int argc, char *argv[])
     retval = listen(listen_sock, SOMAXCONN);
     if (retval == SOCKET_ERROR) err_quit("listen()");
 
-    // ¼ÒÄÏ Á¤º¸ Ãß°¡ & WSAEventSelect()
+    // ì†Œì¼“ ì •ë³´ ì¶”ê°€ & WSAEventSelect()
     AddSocketInfo(listen_sock);
     retval = WSAEventSelect(listen_sock, EventArray[nTotalSockets - 1],
         FD_ACCEPT | FD_CLOSE);
     if (retval == SOCKET_ERROR) err_quit("WSAEventSelect()");
 
-    // µ¥ÀÌÅÍ Åë½Å¿¡ »ç¿ëÇÒ º¯¼ö
+    // ë°ì´í„° í†µì‹ ì— ì‚¬ìš©í•  ë³€ìˆ˜
     WSANETWORKEVENTS NetworkEvents;
     SOCKET client_sock;
     SOCKADDR_IN clientaddr;
     int i, addrlen;
 
     while (1) {
-        // ÀÌº¥Æ® °´Ã¼ °üÂûÇÏ±â
+        // ì´ë²¤íŠ¸ ê°ì²´ ê´€ì°°í•˜ê¸°
         i = WSAWaitForMultipleEvents(nTotalSockets, EventArray,
             FALSE, WSA_INFINITE, FALSE);
         if (i == WSA_WAIT_FAILED) continue;
         i -= WSA_WAIT_EVENT_0;
 
-        // ±¸Ã¼ÀûÀÎ ³×Æ®¿öÅ© ÀÌº¥Æ® ¾Ë¾Æ³»±â
+        // êµ¬ì²´ì ì¸ ë„¤íŠ¸ì›Œí¬ ì´ë²¤íŠ¸ ì•Œì•„ë‚´ê¸°
         retval = WSAEnumNetworkEvents(SocketInfoArray[i]->sock,
             EventArray[i], &NetworkEvents);
         if (retval == SOCKET_ERROR) continue;
 
-        // FD_ACCEPT ÀÌº¥Æ® Ã³¸®
+        // FD_ACCEPT ì´ë²¤íŠ¸ ì²˜ë¦¬
         if (NetworkEvents.lNetworkEvents & FD_ACCEPT) {
             if (NetworkEvents.iErrorCode[FD_ACCEPT_BIT] != 0) {
                 err_display(NetworkEvents.iErrorCode[FD_ACCEPT_BIT]);
@@ -93,23 +93,23 @@ int main(int argc, char *argv[])
                 err_display("accept()");
                 continue;
             }
-            printf("\n[TCP ¼­¹ö] Å¬¶óÀÌ¾ğÆ® Á¢¼Ó: IP ÁÖ¼Ò=%s, Æ÷Æ® ¹øÈ£=%d\n",
+            printf("\n[TCP ì„œë²„] í´ë¼ì´ì–¸íŠ¸ ì ‘ì†: IP ì£¼ì†Œ=%s, í¬íŠ¸ ë²ˆí˜¸=%d\n",
                 inet_ntoa(clientaddr.sin_addr), ntohs(clientaddr.sin_port));
 
             if (nTotalSockets >= WSA_MAXIMUM_WAIT_EVENTS) {
-                printf("[¿À·ù] ´õ ÀÌ»ó Á¢¼ÓÀ» ¹Ş¾ÆµéÀÏ ¼ö ¾ø½À´Ï´Ù!\n");
+                printf("[ì˜¤ë¥˜] ë” ì´ìƒ ì ‘ì†ì„ ë°›ì•„ë“¤ì¼ ìˆ˜ ì—†ìŠµë‹ˆë‹¤!\n");
                 closesocket(client_sock);
                 continue;
             }
 
-            // ¼ÒÄÏ Á¤º¸ Ãß°¡ & WSAEventSelect()
+            // ì†Œì¼“ ì •ë³´ ì¶”ê°€ & WSAEventSelect()
             AddSocketInfo(client_sock);
             retval = WSAEventSelect(client_sock, EventArray[nTotalSockets - 1],
                 FD_READ | FD_WRITE | FD_CLOSE);
             if (retval == SOCKET_ERROR) err_quit("WSAEventSelect()");
         }
 
-        // FD_READ & FD_WRITE ÀÌº¥Æ® Ã³¸®
+        // FD_READ & FD_WRITE ì´ë²¤íŠ¸ ì²˜ë¦¬
         if (NetworkEvents.lNetworkEvents & FD_READ
             || NetworkEvents.lNetworkEvents & FD_WRITE)
         {
@@ -129,7 +129,7 @@ int main(int argc, char *argv[])
             SOCKETINFO *ptr = SocketInfoArray[i];
 
             if (ptr->recvbytes == 0) {
-                // µ¥ÀÌÅÍ ¹Ş±â
+                // ë°ì´í„° ë°›ê¸°
                 retval = recv(ptr->sock, ptr->buf, BUFSIZE, 0);
                 if (retval == SOCKET_ERROR) {
                     if (WSAGetLastError() != WSAEWOULDBLOCK) {
@@ -139,7 +139,7 @@ int main(int argc, char *argv[])
                     continue;
                 }
                 ptr->recvbytes = retval;
-                // ¹ŞÀº µ¥ÀÌÅÍ Ãâ·Â
+                // ë°›ì€ ë°ì´í„° ì¶œë ¥
                 ptr->buf[retval] = '\0';
                 addrlen = sizeof(clientaddr);
                 getpeername(ptr->sock, (SOCKADDR *)&clientaddr, &addrlen);
@@ -148,7 +148,7 @@ int main(int argc, char *argv[])
             }
 
             if (ptr->recvbytes > ptr->sendbytes) {
-                // µ¥ÀÌÅÍ º¸³»±â
+                // ë°ì´í„° ë³´ë‚´ê¸°
                 retval = send(ptr->sock, ptr->buf + ptr->sendbytes,
                     ptr->recvbytes - ptr->sendbytes, 0);
                 if (retval == SOCKET_ERROR) {
@@ -159,13 +159,13 @@ int main(int argc, char *argv[])
                     continue;
                 }
                 ptr->sendbytes += retval;
-                // ¹ŞÀº µ¥ÀÌÅÍ¸¦ ¸ğµÎ º¸³Â´ÂÁö Ã¼Å©
+                // ë°›ì€ ë°ì´í„°ë¥¼ ëª¨ë‘ ë³´ëƒˆëŠ”ì§€ ì²´í¬
                 if (ptr->recvbytes == ptr->sendbytes)
                     ptr->recvbytes = ptr->sendbytes = 0;
             }
         }
 
-        // FD_CLOSE ÀÌº¥Æ® Ã³¸®
+        // FD_CLOSE ì´ë²¤íŠ¸ ì²˜ë¦¬
         if (NetworkEvents.lNetworkEvents & FD_CLOSE) {
             if (NetworkEvents.iErrorCode[FD_CLOSE_BIT] != 0)
                 err_display(NetworkEvents.iErrorCode[FD_CLOSE_BIT]);
@@ -173,17 +173,17 @@ int main(int argc, char *argv[])
         }
     }
 
-    // À©¼Ó Á¾·á
+    // ìœˆì† ì¢…ë£Œ
     WSACleanup();
     return 0;
 }
 
-// ¼ÒÄÏ Á¤º¸ Ãß°¡
+// ì†Œì¼“ ì •ë³´ ì¶”ê°€
 BOOL AddSocketInfo(SOCKET sock)
 {
     SOCKETINFO *ptr = new SOCKETINFO;
     if (ptr == NULL) {
-        printf("[¿À·ù] ¸Ş¸ğ¸®°¡ ºÎÁ·ÇÕ´Ï´Ù!\n");
+        printf("[ì˜¤ë¥˜] ë©”ëª¨ë¦¬ê°€ ë¶€ì¡±í•©ë‹ˆë‹¤!\n");
         return FALSE;
     }
 
@@ -203,7 +203,7 @@ BOOL AddSocketInfo(SOCKET sock)
     return TRUE;
 }
 
-// ¼ÒÄÏ Á¤º¸ »èÁ¦
+// ì†Œì¼“ ì •ë³´ ì‚­ì œ
 void RemoveSocketInfo(int nIndex)
 {
     SOCKETINFO *ptr = SocketInfoArray[nIndex];
@@ -211,7 +211,7 @@ void RemoveSocketInfo(int nIndex)
     SOCKADDR_IN clientaddr;
     int addrlen = sizeof(clientaddr);
     getpeername(ptr->sock, (SOCKADDR *)&clientaddr, &addrlen);
-    printf("[TCP ¼­¹ö] Å¬¶óÀÌ¾ğÆ® Á¾·á: IP ÁÖ¼Ò=%s, Æ÷Æ® ¹øÈ£=%d\n",
+    printf("[TCP ì„œë²„] í´ë¼ì´ì–¸íŠ¸ ì¢…ë£Œ: IP ì£¼ì†Œ=%s, í¬íŠ¸ ë²ˆí˜¸=%d\n",
         inet_ntoa(clientaddr.sin_addr), ntohs(clientaddr.sin_port));
 
     closesocket(ptr->sock);
@@ -225,7 +225,7 @@ void RemoveSocketInfo(int nIndex)
     --nTotalSockets;
 }
 
-// ¼ÒÄÏ ÇÔ¼ö ¿À·ù Ãâ·Â ÈÄ Á¾·á
+// ì†Œì¼“ í•¨ìˆ˜ ì˜¤ë¥˜ ì¶œë ¥ í›„ ì¢…ë£Œ
 void err_quit(char *msg)
 {
     LPVOID lpMsgBuf;
@@ -239,7 +239,7 @@ void err_quit(char *msg)
     exit(1);
 }
 
-// ¼ÒÄÏ ÇÔ¼ö ¿À·ù Ãâ·Â
+// ì†Œì¼“ í•¨ìˆ˜ ì˜¤ë¥˜ ì¶œë ¥
 void err_display(char *msg)
 {
     LPVOID lpMsgBuf;
@@ -252,7 +252,7 @@ void err_display(char *msg)
     LocalFree(lpMsgBuf);
 }
 
-// ¼ÒÄÏ ÇÔ¼ö ¿À·ù Ãâ·Â
+// ì†Œì¼“ í•¨ìˆ˜ ì˜¤ë¥˜ ì¶œë ¥
 void err_display(int errcode)
 {
     LPVOID lpMsgBuf;
@@ -261,6 +261,6 @@ void err_display(int errcode)
         NULL, WSAGetLastError(),
         MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
         (LPTSTR)&lpMsgBuf, 0, NULL);
-    printf("[¿À·ù] %s", (char *)lpMsgBuf);
+    printf("[ì˜¤ë¥˜] %s", (char *)lpMsgBuf);
     LocalFree(lpMsgBuf);
 }
