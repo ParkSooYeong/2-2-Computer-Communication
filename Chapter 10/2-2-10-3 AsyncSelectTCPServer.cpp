@@ -1,4 +1,4 @@
-#define _WINSOCK_DEPRECATED_NO_WARNINGS // ÃÖ½Å VC++ ÄÄÆÄÀÏ ½Ã °æ°í ¹æÁö
+#define _WINSOCK_DEPRECATED_NO_WARNINGS // ìµœì‹  VC++ ì»´íŒŒì¼ ì‹œ ê²½ê³  ë°©ì§€
 #pragma comment(lib, "ws2_32")
 #include <winsock2.h>
 #include <stdlib.h>
@@ -8,7 +8,7 @@
 #define BUFSIZE    512
 #define WM_SOCKET  (WM_USER+1)
 
-// ¼ÒÄÏ Á¤º¸ ÀúÀåÀ» À§ÇÑ ±¸Á¶Ã¼¿Í º¯¼ö
+// ì†Œì¼“ ì •ë³´ ì €ì¥ì„ ìœ„í•œ êµ¬ì¡°ì²´ì™€ ë³€ìˆ˜
 struct SOCKETINFO
 {
     SOCKET sock;
@@ -21,14 +21,14 @@ struct SOCKETINFO
 
 SOCKETINFO *SocketInfoList;
 
-// À©µµ¿ì ¸Ş½ÃÁö Ã³¸® ÇÔ¼ö
+// ìœˆë„ìš° ë©”ì‹œì§€ ì²˜ë¦¬ í•¨ìˆ˜
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 void ProcessSocketMessage(HWND, UINT, WPARAM, LPARAM);
-// ¼ÒÄÏ °ü¸® ÇÔ¼ö
+// ì†Œì¼“ ê´€ë¦¬ í•¨ìˆ˜
 BOOL AddSocketInfo(SOCKET sock);
 SOCKETINFO *GetSocketInfo(SOCKET sock);
 void RemoveSocketInfo(SOCKET sock);
-// ¿À·ù Ãâ·Â ÇÔ¼ö
+// ì˜¤ë¥˜ ì¶œë ¥ í•¨ìˆ˜
 void err_quit(char *msg);
 void err_display(char *msg);
 void err_display(int errcode);
@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
 {
     int retval;
 
-    // À©µµ¿ì Å¬·¡½º µî·Ï
+    // ìœˆë„ìš° í´ë˜ìŠ¤ ë“±ë¡
     WNDCLASS wndclass;
     wndclass.style = CS_HREDRAW | CS_VREDRAW;
     wndclass.lpfnWndProc = WndProc;
@@ -51,14 +51,14 @@ int main(int argc, char *argv[])
     wndclass.lpszClassName = "MyWndClass";
     if (!RegisterClass(&wndclass)) return 1;
 
-    // À©µµ¿ì »ı¼º
-    HWND hWnd = CreateWindow("MyWndClass", "TCP ¼­¹ö", WS_OVERLAPPEDWINDOW,
+    // ìœˆë„ìš° ìƒì„±
+    HWND hWnd = CreateWindow("MyWndClass", "TCP ì„œë²„", WS_OVERLAPPEDWINDOW,
         0, 0, 600, 200, NULL, NULL, NULL, NULL);
     if (hWnd == NULL) return 1;
     ShowWindow(hWnd, SW_SHOWNORMAL);
     UpdateWindow(hWnd);
 
-    // À©¼Ó ÃÊ±âÈ­
+    // ìœˆì† ì´ˆê¸°í™”
     WSADATA wsa;
     if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
         return 1;
@@ -85,23 +85,23 @@ int main(int argc, char *argv[])
         WM_SOCKET, FD_ACCEPT | FD_CLOSE);
     if (retval == SOCKET_ERROR) err_quit("WSAAsyncSelect()");
 
-    // ¸Ş½ÃÁö ·çÇÁ
+    // ë©”ì‹œì§€ ë£¨í”„
     MSG msg;
     while (GetMessage(&msg, 0, 0, 0) > 0) {
         TranslateMessage(&msg);
         DispatchMessage(&msg);
     }
 
-    // À©¼Ó Á¾·á
+    // ìœˆì† ì¢…ë£Œ
     WSACleanup();
     return msg.wParam;
 }
 
-// À©µµ¿ì ¸Ş½ÃÁö Ã³¸®
+// ìœˆë„ìš° ë©”ì‹œì§€ ì²˜ë¦¬
 LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     switch (uMsg) {
-    case WM_SOCKET: // ¼ÒÄÏ °ü·Ã À©µµ¿ì ¸Ş½ÃÁö
+    case WM_SOCKET: // ì†Œì¼“ ê´€ë ¨ ìœˆë„ìš° ë©”ì‹œì§€
         ProcessSocketMessage(hWnd, uMsg, wParam, lParam);
         return 0;
     case WM_DESTROY:
@@ -111,23 +111,23 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
 
-// ¼ÒÄÏ °ü·Ã À©µµ¿ì ¸Ş½ÃÁö Ã³¸®
+// ì†Œì¼“ ê´€ë ¨ ìœˆë„ìš° ë©”ì‹œì§€ ì²˜ë¦¬
 void ProcessSocketMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-    // µ¥ÀÌÅÍ Åë½Å¿¡ »ç¿ëÇÒ º¯¼ö
+    // ë°ì´í„° í†µì‹ ì— ì‚¬ìš©í•  ë³€ìˆ˜
     SOCKETINFO *ptr;
     SOCKET client_sock;
     SOCKADDR_IN clientaddr;
     int addrlen, retval;
 
-    // ¿À·ù ¹ß»ı ¿©ºÎ È®ÀÎ
+    // ì˜¤ë¥˜ ë°œìƒ ì—¬ë¶€ í™•ì¸
     if (WSAGETSELECTERROR(lParam)) {
         err_display(WSAGETSELECTERROR(lParam));
         RemoveSocketInfo(wParam);
         return;
     }
 
-    // ¸Ş½ÃÁö Ã³¸®
+    // ë©”ì‹œì§€ ì²˜ë¦¬
     switch (WSAGETSELECTEVENT(lParam)) {
     case FD_ACCEPT:
         addrlen = sizeof(clientaddr);
@@ -136,7 +136,7 @@ void ProcessSocketMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             err_display("accept()");
             return;
         }
-        printf("\n[TCP ¼­¹ö] Å¬¶óÀÌ¾ğÆ® Á¢¼Ó: IP ÁÖ¼Ò=%s, Æ÷Æ® ¹øÈ£=%d\n",
+        printf("\n[TCP ì„œë²„] í´ë¼ì´ì–¸íŠ¸ ì ‘ì†: IP ì£¼ì†Œ=%s, í¬íŠ¸ ë²ˆí˜¸=%d\n",
             inet_ntoa(clientaddr.sin_addr), ntohs(clientaddr.sin_port));
         AddSocketInfo(client_sock);
         retval = WSAAsyncSelect(client_sock, hWnd,
@@ -152,7 +152,7 @@ void ProcessSocketMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             ptr->recvdelayed = TRUE;
             return;
         }
-        // µ¥ÀÌÅÍ ¹Ş±â
+        // ë°ì´í„° ë°›ê¸°
         retval = recv(ptr->sock, ptr->buf, BUFSIZE, 0);
         if (retval == SOCKET_ERROR) {
             err_display("recv()");
@@ -160,7 +160,7 @@ void ProcessSocketMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             return;
         }
         ptr->recvbytes = retval;
-        // ¹ŞÀº µ¥ÀÌÅÍ Ãâ·Â
+        // ë°›ì€ ë°ì´í„° ì¶œë ¥
         ptr->buf[retval] = '\0';
         addrlen = sizeof(clientaddr);
         getpeername(wParam, (SOCKADDR *)&clientaddr, &addrlen);
@@ -170,7 +170,7 @@ void ProcessSocketMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         ptr = GetSocketInfo(wParam);
         if (ptr->recvbytes <= ptr->sendbytes)
             return;
-        // µ¥ÀÌÅÍ º¸³»±â
+        // ë°ì´í„° ë³´ë‚´ê¸°
         retval = send(ptr->sock, ptr->buf + ptr->sendbytes,
             ptr->recvbytes - ptr->sendbytes, 0);
         if (retval == SOCKET_ERROR) {
@@ -179,7 +179,7 @@ void ProcessSocketMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             return;
         }
         ptr->sendbytes += retval;
-        // ¹ŞÀº µ¥ÀÌÅÍ¸¦ ¸ğµÎ º¸³Â´ÂÁö Ã¼Å©
+        // ë°›ì€ ë°ì´í„°ë¥¼ ëª¨ë‘ ë³´ëƒˆëŠ”ì§€ ì²´í¬
         if (ptr->recvbytes == ptr->sendbytes) {
             ptr->recvbytes = ptr->sendbytes = 0;
             if (ptr->recvdelayed) {
@@ -194,12 +194,12 @@ void ProcessSocketMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     }
 }
 
-// ¼ÒÄÏ Á¤º¸ Ãß°¡
+// ì†Œì¼“ ì •ë³´ ì¶”ê°€
 BOOL AddSocketInfo(SOCKET sock)
 {
     SOCKETINFO *ptr = new SOCKETINFO;
     if (ptr == NULL) {
-        printf("[¿À·ù] ¸Ş¸ğ¸®°¡ ºÎÁ·ÇÕ´Ï´Ù!\n");
+        printf("[ì˜¤ë¥˜] ë©”ëª¨ë¦¬ê°€ ë¶€ì¡±í•©ë‹ˆë‹¤!\n");
         return FALSE;
     }
 
@@ -213,7 +213,7 @@ BOOL AddSocketInfo(SOCKET sock)
     return TRUE;
 }
 
-// ¼ÒÄÏ Á¤º¸ ¾ò±â
+// ì†Œì¼“ ì •ë³´ ì–»ê¸°
 SOCKETINFO *GetSocketInfo(SOCKET sock)
 {
     SOCKETINFO *ptr = SocketInfoList;
@@ -227,13 +227,13 @@ SOCKETINFO *GetSocketInfo(SOCKET sock)
     return NULL;
 }
 
-// ¼ÒÄÏ Á¤º¸ Á¦°Å
+// ì†Œì¼“ ì •ë³´ ì œê±°
 void RemoveSocketInfo(SOCKET sock)
 {
     SOCKADDR_IN clientaddr;
     int addrlen = sizeof(clientaddr);
     getpeername(sock, (SOCKADDR *)&clientaddr, &addrlen);
-    printf("[TCP ¼­¹ö] Å¬¶óÀÌ¾ğÆ® Á¾·á: IP ÁÖ¼Ò=%s, Æ÷Æ® ¹øÈ£=%d\n",
+    printf("[TCP ì„œë²„] í´ë¼ì´ì–¸íŠ¸ ì¢…ë£Œ: IP ì£¼ì†Œ=%s, í¬íŠ¸ ë²ˆí˜¸=%d\n",
         inet_ntoa(clientaddr.sin_addr), ntohs(clientaddr.sin_port));
 
     SOCKETINFO *curr = SocketInfoList;
@@ -254,7 +254,7 @@ void RemoveSocketInfo(SOCKET sock)
     }
 }
 
-// ¼ÒÄÏ ÇÔ¼ö ¿À·ù Ãâ·Â ÈÄ Á¾·á
+// ì†Œì¼“ í•¨ìˆ˜ ì˜¤ë¥˜ ì¶œë ¥ í›„ ì¢…ë£Œ
 void err_quit(char *msg)
 {
     LPVOID lpMsgBuf;
@@ -268,7 +268,7 @@ void err_quit(char *msg)
     exit(1);
 }
 
-// ¼ÒÄÏ ÇÔ¼ö ¿À·ù Ãâ·Â
+// ì†Œì¼“ í•¨ìˆ˜ ì˜¤ë¥˜ ì¶œë ¥
 void err_display(char *msg)
 {
     LPVOID lpMsgBuf;
@@ -281,7 +281,7 @@ void err_display(char *msg)
     LocalFree(lpMsgBuf);
 }
 
-// ¼ÒÄÏ ÇÔ¼ö ¿À·ù Ãâ·Â
+// ì†Œì¼“ í•¨ìˆ˜ ì˜¤ë¥˜ ì¶œë ¥
 void err_display(int errcode)
 {
     LPVOID lpMsgBuf;
@@ -290,6 +290,6 @@ void err_display(int errcode)
         NULL, errcode,
         MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
         (LPTSTR)&lpMsgBuf, 0, NULL);
-    printf("[¿À·ù] %s", (char *)lpMsgBuf);
+    printf("[ì˜¤ë¥˜] %s", (char *)lpMsgBuf);
     LocalFree(lpMsgBuf);
 }
