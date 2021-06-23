@@ -1,4 +1,4 @@
-#define _WINSOCK_DEPRECATED_NO_WARNINGS // ÃÖ½Å VC++ ÄÄÆÄÀÏ ½Ã °æ°í ¹æÁö
+#define _WINSOCK_DEPRECATED_NO_WARNINGS // ìµœì‹  VC++ ì»´íŒŒì¼ ì‹œ ê²½ê³  ë°©ì§€
 #pragma comment(lib, "ws2_32")
 #include <winsock2.h>
 #include <stdlib.h>
@@ -7,7 +7,7 @@
 #define SERVERPORT 9000
 #define BUFSIZE    512
 
-// ¼ÒÄÏ Á¤º¸ ÀúÀåÀ» À§ÇÑ ±¸Á¶Ã¼¿Í º¯¼ö
+// ì†Œì¼“ ì •ë³´ ì €ì¥ì„ ìœ„í•œ êµ¬ì¡°ì²´ì™€ ë³€ìˆ˜
 struct SOCKETINFO
 {
     WSAOVERLAPPED overlapped;
@@ -23,12 +23,12 @@ SOCKETINFO *SocketInfoArray[WSA_MAXIMUM_WAIT_EVENTS];
 WSAEVENT EventArray[WSA_MAXIMUM_WAIT_EVENTS];
 CRITICAL_SECTION cs;
 
-// ºñµ¿±â ÀÔÃâ·Â Ã³¸® ÇÔ¼ö
+// ë¹„ë™ê¸° ì…ì¶œë ¥ ì²˜ë¦¬ í•¨ìˆ˜
 DWORD WINAPI WorkerThread(LPVOID arg);
-// ¼ÒÄÏ °ü¸® ÇÔ¼ö
+// ì†Œì¼“ ê´€ë¦¬ í•¨ìˆ˜
 BOOL AddSocketInfo(SOCKET sock);
 void RemoveSocketInfo(int nIndex);
-// ¿À·ù Ãâ·Â ÇÔ¼ö
+// ì˜¤ë¥˜ ì¶œë ¥ í•¨ìˆ˜
 void err_quit(char *msg);
 void err_display(char *msg);
 
@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
     int retval;
     InitializeCriticalSection(&cs);
 
-    // À©¼Ó ÃÊ±âÈ­
+    // ìœˆì† ì´ˆê¸°í™”
     WSADATA wsa;
     if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0) return 1;
 
@@ -58,18 +58,18 @@ int main(int argc, char *argv[])
     retval = listen(listen_sock, SOMAXCONN);
     if (retval == SOCKET_ERROR) err_quit("listen()");
 
-    // ´õ¹Ì(dummy) ÀÌº¥Æ® °´Ã¼ »ı¼º
+    // ë”ë¯¸(dummy) ì´ë²¤íŠ¸ ê°ì²´ ìƒì„±
     WSAEVENT hEvent = WSACreateEvent();
     if (hEvent == WSA_INVALID_EVENT)
         err_quit("WSACreateEvent()");
     EventArray[nTotalSockets++] = hEvent;
 
-    // ½º·¹µå »ı¼º
+    // ìŠ¤ë ˆë“œ ìƒì„±
     HANDLE hThread = CreateThread(NULL, 0, WorkerThread, NULL, 0, NULL);
     if (hThread == NULL) return 1;
     CloseHandle(hThread);
 
-    // µ¥ÀÌÅÍ Åë½Å¿¡ »ç¿ëÇÒ º¯¼ö
+    // ë°ì´í„° í†µì‹ ì— ì‚¬ìš©í•  ë³€ìˆ˜
     SOCKET client_sock;
     SOCKADDR_IN clientaddr;
     int addrlen;
@@ -83,18 +83,18 @@ int main(int argc, char *argv[])
             err_display("accept()");
             break;
         }
-        printf("\n[TCP ¼­¹ö] Å¬¶óÀÌ¾ğÆ® Á¢¼Ó: IP ÁÖ¼Ò=%s, Æ÷Æ® ¹øÈ£=%d\n",
+        printf("\n[TCP ì„œë²„] í´ë¼ì´ì–¸íŠ¸ ì ‘ì†: IP ì£¼ì†Œ=%s, í¬íŠ¸ ë²ˆí˜¸=%d\n",
             inet_ntoa(clientaddr.sin_addr), ntohs(clientaddr.sin_port));
 
-        // ¼ÒÄÏ Á¤º¸ Ãß°¡
+        // ì†Œì¼“ ì •ë³´ ì¶”ê°€
         if (AddSocketInfo(client_sock) == FALSE) {
             closesocket(client_sock);
-            printf("[TCP ¼­¹ö] Å¬¶óÀÌ¾ğÆ® Á¾·á: IP ÁÖ¼Ò=%s, Æ÷Æ® ¹øÈ£=%d\n",
+            printf("[TCP ì„œë²„] í´ë¼ì´ì–¸íŠ¸ ì¢…ë£Œ: IP ì£¼ì†Œ=%s, í¬íŠ¸ ë²ˆí˜¸=%d\n",
                 inet_ntoa(clientaddr.sin_addr), ntohs(clientaddr.sin_port));
             continue;
         }
 
-        // ºñµ¿±â ÀÔÃâ·Â ½ÃÀÛ
+        // ë¹„ë™ê¸° ì…ì¶œë ¥ ì‹œì‘
         SOCKETINFO *ptr = SocketInfoArray[nTotalSockets - 1];
         flags = 0;
         retval = WSARecv(ptr->sock, &ptr->wsabuf, 1, &recvbytes,
@@ -107,23 +107,23 @@ int main(int argc, char *argv[])
             }
         }
 
-        // ¼ÒÄÏÀÇ °³¼ö(nTotalSockets) º¯È­¸¦ ¾Ë¸²
+        // ì†Œì¼“ì˜ ê°œìˆ˜(nTotalSockets) ë³€í™”ë¥¼ ì•Œë¦¼
         WSASetEvent(EventArray[0]);
     }
 
-    // À©¼Ó Á¾·á
+    // ìœˆì† ì¢…ë£Œ
     WSACleanup();
     DeleteCriticalSection(&cs);
     return 0;
 }
 
-// ºñµ¿±â ÀÔÃâ·Â Ã³¸® ÇÔ¼ö
+// ë¹„ë™ê¸° ì…ì¶œë ¥ ì²˜ë¦¬ í•¨ìˆ˜
 DWORD WINAPI WorkerThread(LPVOID arg)
 {
     int retval;
 
     while (1) {
-        // ÀÌº¥Æ® °´Ã¼ °üÂû
+        // ì´ë²¤íŠ¸ ê°ì²´ ê´€ì°°
         DWORD index = WSAWaitForMultipleEvents(nTotalSockets,
             EventArray, FALSE, WSA_INFINITE, FALSE);
         if (index == WSA_WAIT_FAILED) continue;
@@ -131,28 +131,28 @@ DWORD WINAPI WorkerThread(LPVOID arg)
         WSAResetEvent(EventArray[index]);
         if (index == 0) continue;
 
-        // Å¬¶óÀÌ¾ğÆ® Á¤º¸ ¾ò±â
+        // í´ë¼ì´ì–¸íŠ¸ ì •ë³´ ì–»ê¸°
         SOCKETINFO *ptr = SocketInfoArray[index];
         SOCKADDR_IN clientaddr;
         int addrlen = sizeof(clientaddr);
         getpeername(ptr->sock, (SOCKADDR *)&clientaddr, &addrlen);
 
-        // ºñµ¿±â ÀÔÃâ·Â °á°ú È®ÀÎ
+        // ë¹„ë™ê¸° ì…ì¶œë ¥ ê²°ê³¼ í™•ì¸
         DWORD cbTransferred, flags;
         retval = WSAGetOverlappedResult(ptr->sock, &ptr->overlapped,
             &cbTransferred, FALSE, &flags);
         if (retval == FALSE || cbTransferred == 0) {
             RemoveSocketInfo(index);
-            printf("[TCP ¼­¹ö] Å¬¶óÀÌ¾ğÆ® Á¾·á: IP ÁÖ¼Ò=%s, Æ÷Æ® ¹øÈ£=%d\n",
+            printf("[TCP ì„œë²„] í´ë¼ì´ì–¸íŠ¸ ì¢…ë£Œ: IP ì£¼ì†Œ=%s, í¬íŠ¸ ë²ˆí˜¸=%d\n",
                 inet_ntoa(clientaddr.sin_addr), ntohs(clientaddr.sin_port));
             continue;
         }
 
-        // µ¥ÀÌÅÍ Àü¼Û·® °»½Å
+        // ë°ì´í„° ì „ì†¡ëŸ‰ ê°±ì‹ 
         if (ptr->recvbytes == 0) {
             ptr->recvbytes = cbTransferred;
             ptr->sendbytes = 0;
-            // ¹ŞÀº µ¥ÀÌÅÍ Ãâ·Â
+            // ë°›ì€ ë°ì´í„° ì¶œë ¥
             ptr->buf[ptr->recvbytes] = '\0';
             printf("[TCP/%s:%d] %s\n", inet_ntoa(clientaddr.sin_addr),
                 ntohs(clientaddr.sin_port), ptr->buf);
@@ -162,7 +162,7 @@ DWORD WINAPI WorkerThread(LPVOID arg)
         }
 
         if (ptr->recvbytes > ptr->sendbytes) {
-            // µ¥ÀÌÅÍ º¸³»±â
+            // ë°ì´í„° ë³´ë‚´ê¸°
             ZeroMemory(&ptr->overlapped, sizeof(ptr->overlapped));
             ptr->overlapped.hEvent = EventArray[index];
             ptr->wsabuf.buf = ptr->buf + ptr->sendbytes;
@@ -181,7 +181,7 @@ DWORD WINAPI WorkerThread(LPVOID arg)
         else {
             ptr->recvbytes = 0;
 
-            // µ¥ÀÌÅÍ ¹Ş±â
+            // ë°ì´í„° ë°›ê¸°
             ZeroMemory(&ptr->overlapped, sizeof(ptr->overlapped));
             ptr->overlapped.hEvent = EventArray[index];
             ptr->wsabuf.buf = ptr->buf;
@@ -201,7 +201,7 @@ DWORD WINAPI WorkerThread(LPVOID arg)
     }
 }
 
-// ¼ÒÄÏ Á¤º¸ Ãß°¡
+// ì†Œì¼“ ì •ë³´ ì¶”ê°€
 BOOL AddSocketInfo(SOCKET sock)
 {
     EnterCriticalSection(&cs);
@@ -227,7 +227,7 @@ BOOL AddSocketInfo(SOCKET sock)
     return TRUE;
 }
 
-// ¼ÒÄÏ Á¤º¸ »èÁ¦
+// ì†Œì¼“ ì •ë³´ ì‚­ì œ
 void RemoveSocketInfo(int nIndex)
 {
     EnterCriticalSection(&cs);
@@ -246,7 +246,7 @@ void RemoveSocketInfo(int nIndex)
     LeaveCriticalSection(&cs);
 }
 
-// ¼ÒÄÏ ÇÔ¼ö ¿À·ù Ãâ·Â ÈÄ Á¾·á
+// ì†Œì¼“ í•¨ìˆ˜ ì˜¤ë¥˜ ì¶œë ¥ í›„ ì¢…ë£Œ
 void err_quit(char *msg)
 {
     LPVOID lpMsgBuf;
@@ -260,7 +260,7 @@ void err_quit(char *msg)
     exit(1);
 }
 
-// ¼ÒÄÏ ÇÔ¼ö ¿À·ù Ãâ·Â
+// ì†Œì¼“ í•¨ìˆ˜ ì˜¤ë¥˜ ì¶œë ¥
 void err_display(char *msg)
 {
     LPVOID lpMsgBuf;
