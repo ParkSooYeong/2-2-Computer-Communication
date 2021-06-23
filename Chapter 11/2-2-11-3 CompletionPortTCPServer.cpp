@@ -1,4 +1,4 @@
-#define _WINSOCK_DEPRECATED_NO_WARNINGS // ÃÖ½Å VC++ ÄÄÆÄÀÏ ½Ã °æ°í ¹æÁö
+#define _WINSOCK_DEPRECATED_NO_WARNINGS // ìµœì‹  VC++ ì»´íŒŒì¼ ì‹œ ê²½ê³  ë°©ì§€
 #pragma comment(lib, "ws2_32")
 #include <winsock2.h>
 #include <stdlib.h>
@@ -7,7 +7,7 @@
 #define SERVERPORT 9000
 #define BUFSIZE    512
 
-// ¼ÒÄÏ Á¤º¸ ÀúÀåÀ» À§ÇÑ ±¸Á¶Ã¼
+// ì†Œì¼“ ì •ë³´ ì €ì¥ì„ ìœ„í•œ êµ¬ì¡°ì²´
 struct SOCKETINFO
 {
     OVERLAPPED overlapped;
@@ -18,9 +18,9 @@ struct SOCKETINFO
     WSABUF wsabuf;
 };
 
-// ÀÛ¾÷ÀÚ ½º·¹µå ÇÔ¼ö
+// ì‘ì—…ì ìŠ¤ë ˆë“œ í•¨ìˆ˜
 DWORD WINAPI WorkerThread(LPVOID arg);
-// ¿À·ù Ãâ·Â ÇÔ¼ö
+// ì˜¤ë¥˜ ì¶œë ¥ í•¨ìˆ˜
 void err_quit(char *msg);
 void err_display(char *msg);
 
@@ -28,19 +28,19 @@ int main(int argc, char *argv[])
 {
     int retval;
 
-    // À©¼Ó ÃÊ±âÈ­
+    // ìœˆì† ì´ˆê¸°í™”
     WSADATA wsa;
     if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0) return 1;
 
-    // ÀÔÃâ·Â ¿Ï·á Æ÷Æ® »ı¼º
+    // ì…ì¶œë ¥ ì™„ë£Œ í¬íŠ¸ ìƒì„±
     HANDLE hcp = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, 0, 0);
     if (hcp == NULL) return 1;
 
-    // CPU °³¼ö È®ÀÎ
+    // CPU ê°œìˆ˜ í™•ì¸
     SYSTEM_INFO si;
     GetSystemInfo(&si);
 
-    // (CPU °³¼ö * 2)°³ÀÇ ÀÛ¾÷ÀÚ ½º·¹µå »ı¼º
+    // (CPU ê°œìˆ˜ * 2)ê°œì˜ ì‘ì—…ì ìŠ¤ë ˆë“œ ìƒì„±
     HANDLE hThread;
     for (int i = 0; i < (int)si.dwNumberOfProcessors * 2; i++) {
         hThread = CreateThread(NULL, 0, WorkerThread, hcp, 0, NULL);
@@ -65,7 +65,7 @@ int main(int argc, char *argv[])
     retval = listen(listen_sock, SOMAXCONN);
     if (retval == SOCKET_ERROR) err_quit("listen()");
 
-    // µ¥ÀÌÅÍ Åë½Å¿¡ »ç¿ëÇÒ º¯¼ö
+    // ë°ì´í„° í†µì‹ ì— ì‚¬ìš©í•  ë³€ìˆ˜
     SOCKET client_sock;
     SOCKADDR_IN clientaddr;
     int addrlen;
@@ -79,13 +79,13 @@ int main(int argc, char *argv[])
             err_display("accept()");
             break;
         }
-        printf("[TCP ¼­¹ö] Å¬¶óÀÌ¾ğÆ® Á¢¼Ó: IP ÁÖ¼Ò=%s, Æ÷Æ® ¹øÈ£=%d\n",
+        printf("[TCP ì„œë²„] í´ë¼ì´ì–¸íŠ¸ ì ‘ì†: IP ì£¼ì†Œ=%s, í¬íŠ¸ ë²ˆí˜¸=%d\n",
             inet_ntoa(clientaddr.sin_addr), ntohs(clientaddr.sin_port));
 
-        // ¼ÒÄÏ°ú ÀÔÃâ·Â ¿Ï·á Æ÷Æ® ¿¬°á
+        // ì†Œì¼“ê³¼ ì…ì¶œë ¥ ì™„ë£Œ í¬íŠ¸ ì—°ê²°
         CreateIoCompletionPort((HANDLE)client_sock, hcp, client_sock, 0);
 
-        // ¼ÒÄÏ Á¤º¸ ±¸Á¶Ã¼ ÇÒ´ç
+        // ì†Œì¼“ ì •ë³´ êµ¬ì¡°ì²´ í• ë‹¹
         SOCKETINFO *ptr = new SOCKETINFO;
         if (ptr == NULL) break;
         ZeroMemory(&ptr->overlapped, sizeof(ptr->overlapped));
@@ -94,7 +94,7 @@ int main(int argc, char *argv[])
         ptr->wsabuf.buf = ptr->buf;
         ptr->wsabuf.len = BUFSIZE;
 
-        // ºñµ¿±â ÀÔÃâ·Â ½ÃÀÛ
+        // ë¹„ë™ê¸° ì…ì¶œë ¥ ì‹œì‘
         flags = 0;
         retval = WSARecv(client_sock, &ptr->wsabuf, 1, &recvbytes,
             &flags, &ptr->overlapped, NULL);
@@ -106,31 +106,31 @@ int main(int argc, char *argv[])
         }
     }
 
-    // À©¼Ó Á¾·á
+    // ìœˆì† ì¢…ë£Œ
     WSACleanup();
     return 0;
 }
 
-// ÀÛ¾÷ÀÚ ½º·¹µå ÇÔ¼ö
+// ì‘ì—…ì ìŠ¤ë ˆë“œ í•¨ìˆ˜
 DWORD WINAPI WorkerThread(LPVOID arg)
 {
     int retval;
     HANDLE hcp = (HANDLE)arg;
 
     while (1) {
-        // ºñµ¿±â ÀÔÃâ·Â ¿Ï·á ±â´Ù¸®±â
+        // ë¹„ë™ê¸° ì…ì¶œë ¥ ì™„ë£Œ ê¸°ë‹¤ë¦¬ê¸°
         DWORD cbTransferred;
         SOCKET client_sock;
         SOCKETINFO *ptr;
         retval = GetQueuedCompletionStatus(hcp, &cbTransferred,
             (LPDWORD)&client_sock, (LPOVERLAPPED *)&ptr, INFINITE);
 
-        // Å¬¶óÀÌ¾ğÆ® Á¤º¸ ¾ò±â
+        // í´ë¼ì´ì–¸íŠ¸ ì •ë³´ ì–»ê¸°
         SOCKADDR_IN clientaddr;
         int addrlen = sizeof(clientaddr);
         getpeername(ptr->sock, (SOCKADDR *)&clientaddr, &addrlen);
 
-        // ºñµ¿±â ÀÔÃâ·Â °á°ú È®ÀÎ
+        // ë¹„ë™ê¸° ì…ì¶œë ¥ ê²°ê³¼ í™•ì¸
         if (retval == 0 || cbTransferred == 0) {
             if (retval == 0) {
                 DWORD temp1, temp2;
@@ -139,17 +139,17 @@ DWORD WINAPI WorkerThread(LPVOID arg)
                 err_display("WSAGetOverlappedResult()");
             }
             closesocket(ptr->sock);
-            printf("[TCP ¼­¹ö] Å¬¶óÀÌ¾ğÆ® Á¾·á: IP ÁÖ¼Ò=%s, Æ÷Æ® ¹øÈ£=%d\n",
+            printf("[TCP ì„œë²„] í´ë¼ì´ì–¸íŠ¸ ì¢…ë£Œ: IP ì£¼ì†Œ=%s, í¬íŠ¸ ë²ˆí˜¸=%d\n",
                 inet_ntoa(clientaddr.sin_addr), ntohs(clientaddr.sin_port));
             delete ptr;
             continue;
         }
 
-        // µ¥ÀÌÅÍ Àü¼Û·® °»½Å
+        // ë°ì´í„° ì „ì†¡ëŸ‰ ê°±ì‹ 
         if (ptr->recvbytes == 0) {
             ptr->recvbytes = cbTransferred;
             ptr->sendbytes = 0;
-            // ¹ŞÀº µ¥ÀÌÅÍ Ãâ·Â
+            // ë°›ì€ ë°ì´í„° ì¶œë ¥
             ptr->buf[ptr->recvbytes] = '\0';
             printf("[TCP/%s:%d] %s\n", inet_ntoa(clientaddr.sin_addr),
                 ntohs(clientaddr.sin_port), ptr->buf);
@@ -159,7 +159,7 @@ DWORD WINAPI WorkerThread(LPVOID arg)
         }
 
         if (ptr->recvbytes > ptr->sendbytes) {
-            // µ¥ÀÌÅÍ º¸³»±â
+            // ë°ì´í„° ë³´ë‚´ê¸°
             ZeroMemory(&ptr->overlapped, sizeof(ptr->overlapped));
             ptr->wsabuf.buf = ptr->buf + ptr->sendbytes;
             ptr->wsabuf.len = ptr->recvbytes - ptr->sendbytes;
@@ -177,7 +177,7 @@ DWORD WINAPI WorkerThread(LPVOID arg)
         else {
             ptr->recvbytes = 0;
 
-            // µ¥ÀÌÅÍ ¹Ş±â
+            // ë°ì´í„° ë°›ê¸°
             ZeroMemory(&ptr->overlapped, sizeof(ptr->overlapped));
             ptr->wsabuf.buf = ptr->buf;
             ptr->wsabuf.len = BUFSIZE;
@@ -198,7 +198,7 @@ DWORD WINAPI WorkerThread(LPVOID arg)
     return 0;
 }
 
-// ¼ÒÄÏ ÇÔ¼ö ¿À·ù Ãâ·Â ÈÄ Á¾·á
+// ì†Œì¼“ í•¨ìˆ˜ ì˜¤ë¥˜ ì¶œë ¥ í›„ ì¢…ë£Œ
 void err_quit(char *msg)
 {
     LPVOID lpMsgBuf;
@@ -212,7 +212,7 @@ void err_quit(char *msg)
     exit(1);
 }
 
-// ¼ÒÄÏ ÇÔ¼ö ¿À·ù Ãâ·Â
+// ì†Œì¼“ í•¨ìˆ˜ ì˜¤ë¥˜ ì¶œë ¥
 void err_display(char *msg)
 {
     LPVOID lpMsgBuf;
