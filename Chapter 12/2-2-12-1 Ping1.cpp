@@ -1,4 +1,4 @@
-#define _WINSOCK_DEPRECATED_NO_WARNINGS // ÃÖ½Å VC++ ÄÄÆÄÀÏ ½Ã °æ°í ¹æÁö
+#define _WINSOCK_DEPRECATED_NO_WARNINGS // ìµœì‹  VC++ ì»´íŒŒì¼ ì‹œ ê²½ê³  ë°©ì§€
 #pragma comment(lib, "ws2_32")
 #include <winsock2.h>
 #include <stdlib.h>
@@ -6,7 +6,7 @@
 
 #define BUFSIZE 1500
 
-// IP Çì´õ
+// IP í—¤ë”
 typedef struct _IPHEADER
 {
     u_char  ip_hl : 4;  // header length
@@ -22,7 +22,7 @@ typedef struct _IPHEADER
     IN_ADDR ip_dst;   // destination address
 } IPHEADER;
 
-// ICMP ¸Ş½ÃÁö
+// ICMP ë©”ì‹œì§€
 typedef struct _ICMPMESSAGE
 {
     u_char  icmp_type;  // type of message
@@ -35,13 +35,13 @@ typedef struct _ICMPMESSAGE
 #define ICMP_ECHOREQUEST 8
 #define ICMP_ECHOREPLY   0
 
-// ICMP ¸Ş½ÃÁö ºĞ¼® ÇÔ¼ö
+// ICMP ë©”ì‹œì§€ ë¶„ì„ í•¨ìˆ˜
 void DecodeICMPMessage(char *buf, int bytes, SOCKADDR_IN *from);
-// µµ¸ŞÀÎ ÀÌ¸§ -> IPv4 ÁÖ¼Ò º¯È¯ ÇÔ¼ö
+// ë„ë©”ì¸ ì´ë¦„ -> IPv4 ì£¼ì†Œ ë³€í™˜ í•¨ìˆ˜
 BOOL GetIPAddr(char *name, IN_ADDR *addr);
-// Ã¼Å©¼¶ °è»ê ÇÔ¼ö
+// ì²´í¬ì„¬ ê³„ì‚° í•¨ìˆ˜
 u_short checksum(u_short *buffer, int size);
-// ¿À·ù Ãâ·Â ÇÔ¼ö
+// ì˜¤ë¥˜ ì¶œë ¥ í•¨ìˆ˜
 void err_quit(char *msg);
 void err_display(char *msg);
 
@@ -54,7 +54,7 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    // À©¼Ó ÃÊ±âÈ­
+    // ìœˆì† ì´ˆê¸°í™”
     WSADATA wsa;
     if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0) return 1;
 
@@ -62,7 +62,7 @@ int main(int argc, char *argv[])
     SOCKET sock = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP);
     if (sock == INVALID_SOCKET) err_quit("socket()");
 
-    // ¼ÒÄÏ ¿É¼Ç ¼³Á¤
+    // ì†Œì¼“ ì˜µì…˜ ì„¤ì •
     int optval = 1000;
     retval = setsockopt(sock, SOL_SOCKET, SO_SNDTIMEO,
         (char *)&optval, sizeof(optval));
@@ -72,7 +72,7 @@ int main(int argc, char *argv[])
         (char *)&optval, sizeof(optval));
     if (retval == SOCKET_ERROR) err_quit("setsockopt()");
 
-    // ¼ÒÄÏ ÁÖ¼Ò ±¸Á¶Ã¼ ÃÊ±âÈ­
+    // ì†Œì¼“ ì£¼ì†Œ êµ¬ì¡°ì²´ ì´ˆê¸°í™”
     SOCKADDR_IN destaddr;
     ZeroMemory(&destaddr, sizeof(destaddr));
     destaddr.sin_family = AF_INET;
@@ -82,14 +82,14 @@ int main(int argc, char *argv[])
     else
         return 1;
 
-    // µ¥ÀÌÅÍ Åë½Å¿¡ »ç¿ëÇÒ º¯¼ö
+    // ë°ì´í„° í†µì‹ ì— ì‚¬ìš©í•  ë³€ìˆ˜
     ICMPMESSAGE icmpmsg;
     char buf[BUFSIZE];
     SOCKADDR_IN peeraddr;
     int addrlen;
 
     for (int i = 0; i < 4; i++) {
-        // ICMP ¸Ş½ÃÁö ÃÊ±âÈ­
+        // ICMP ë©”ì‹œì§€ ì´ˆê¸°í™”
         ZeroMemory(&icmpmsg, sizeof(icmpmsg));
         icmpmsg.icmp_type = ICMP_ECHOREQUEST;
         icmpmsg.icmp_code = 0;
@@ -97,32 +97,32 @@ int main(int argc, char *argv[])
         icmpmsg.icmp_seq = i;
         icmpmsg.icmp_cksum = checksum((u_short *)&icmpmsg, sizeof(icmpmsg));
 
-        // ¿¡ÄÚ ¿äÃ» ICMP ¸Ş½ÃÁö º¸³»±â
+        // ì—ì½” ìš”ì²­ ICMP ë©”ì‹œì§€ ë³´ë‚´ê¸°
         retval = sendto(sock, (char *)&icmpmsg, sizeof(icmpmsg), 0,
             (SOCKADDR *)&destaddr, sizeof(destaddr));
         if (retval == SOCKET_ERROR) {
             if (WSAGetLastError() == WSAETIMEDOUT) {
-                printf("[¿À·ù] Send timed out!\n");
+                printf("[ì˜¤ë¥˜] Send timed out!\n");
                 continue;
             }
             err_display("sendto()");
             break;
         }
 
-        // ICMP ¸Ş½ÃÁö ¹Ş±â
+        // ICMP ë©”ì‹œì§€ ë°›ê¸°
         addrlen = sizeof(peeraddr);
         retval = recvfrom(sock, buf, BUFSIZE, 0,
             (SOCKADDR *)&peeraddr, &addrlen);
         if (retval == SOCKET_ERROR) {
             if (WSAGetLastError() == WSAETIMEDOUT) {
-                printf("[¿À·ù] Request timed out!\n");
+                printf("[ì˜¤ë¥˜] Request timed out!\n");
                 continue;
             }
             err_display("recvfrom()");
             break;
         }
 
-        // ICMP ¸Ş½ÃÁö ºĞ¼®
+        // ICMP ë©”ì‹œì§€ ë¶„ì„
         DecodeICMPMessage(buf, retval, &peeraddr);
 
         Sleep(1000);
@@ -131,40 +131,40 @@ int main(int argc, char *argv[])
     // closesocket()
     closesocket(sock);
 
-    // À©¼Ó Á¾·á
+    // ìœˆì† ì¢…ë£Œ
     WSACleanup();
     return 0;
 }
 
-// ICMP ¸Ş½ÃÁö ºĞ¼® ÇÔ¼ö
+// ICMP ë©”ì‹œì§€ ë¶„ì„ í•¨ìˆ˜
 void DecodeICMPMessage(char *buf, int len, SOCKADDR_IN *from)
 {
     IPHEADER *iphdr = (IPHEADER *)buf;
     int iphdrlen = iphdr->ip_hl * 4;
     ICMPMESSAGE *icmpmsg = (ICMPMESSAGE *)(buf + iphdrlen);
 
-    // ¿À·ù Ã¼Å©
+    // ì˜¤ë¥˜ ì²´í¬
     if ((len - iphdrlen) < 8) {
-        printf("[¿À·ù] ICMP packet is too short!\n");
+        printf("[ì˜¤ë¥˜] ICMP packet is too short!\n");
         return;
     }
     if (icmpmsg->icmp_id != (u_short)GetCurrentProcessId()) {
-        printf("[¿À·ù] Not a reponse to our echo request!\n");
+        printf("[ì˜¤ë¥˜] Not a reponse to our echo request!\n");
         return;
     }
     if (icmpmsg->icmp_type != ICMP_ECHOREPLY) {
-        printf("[¿À·ù] Not a echo reply packet!\n");
+        printf("[ì˜¤ë¥˜] Not a echo reply packet!\n");
         return;
     }
 
-    // °á°ú Ãâ·Â
+    // ê²°ê³¼ ì¶œë ¥
     printf("Reply from %s: total bytes = %d, seq = %d\n",
         inet_ntoa(from->sin_addr), len, icmpmsg->icmp_seq);
 
     return;
 }
 
-// µµ¸ŞÀÎ ÀÌ¸§ -> IPv4 ÁÖ¼Ò º¯È¯ ÇÔ¼ö
+// ë„ë©”ì¸ ì´ë¦„ -> IPv4 ì£¼ì†Œ ë³€í™˜ í•¨ìˆ˜
 BOOL GetIPAddr(char *name, IN_ADDR *addr)
 {
     HOSTENT *ptr = gethostbyname(name);
@@ -178,7 +178,7 @@ BOOL GetIPAddr(char *name, IN_ADDR *addr)
     return TRUE;
 }
 
-// Ã¼Å©¼¶ °è»ê ÇÔ¼ö
+// ì²´í¬ì„¬ ê³„ì‚° í•¨ìˆ˜
 u_short checksum(u_short *buf, int len)
 {
     u_long cksum = 0;
@@ -198,7 +198,7 @@ u_short checksum(u_short *buf, int len)
     return (u_short)(~cksum);
 }
 
-// ¼ÒÄÏ ÇÔ¼ö ¿À·ù Ãâ·Â ÈÄ Á¾·á
+// ì†Œì¼“ í•¨ìˆ˜ ì˜¤ë¥˜ ì¶œë ¥ í›„ ì¢…ë£Œ
 void err_quit(char *msg)
 {
     LPVOID lpMsgBuf;
@@ -212,7 +212,7 @@ void err_quit(char *msg)
     exit(1);
 }
 
-// ¼ÒÄÏ ÇÔ¼ö ¿À·ù Ãâ·Â
+// ì†Œì¼“ í•¨ìˆ˜ ì˜¤ë¥˜ ì¶œë ¥
 void err_display(char *msg)
 {
     LPVOID lpMsgBuf;
