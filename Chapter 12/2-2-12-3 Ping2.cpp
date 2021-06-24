@@ -1,10 +1,10 @@
-#define _WINSOCK_DEPRECATED_NO_WARNINGS // ÃÖ½Å VC++ ÄÄÆÄÀÏ ½Ã °æ°í ¹æÁö
+#define _WINSOCK_DEPRECATED_NO_WARNINGS // ìµœì‹  VC++ ì»´íŒŒì¼ ì‹œ ê²½ê³  ë°©ì§€
 #pragma comment(lib, "ws2_32")
 #include <winsock2.h>
 #include <stdlib.h>
 #include <stdio.h>
 
-// ±¸Á¶Ã¼ ¼±¾ğ
+// êµ¬ì¡°ì²´ ì„ ì–¸
 typedef struct {
     unsigned char Ttl;             // Time to live
     unsigned char Tos;             // Type of service
@@ -23,7 +23,7 @@ typedef struct {
     IP_OPTION_INFORMATION Options; // Reply options
 } ICMP_ECHO_REPLY, *PICMP_ECHO_REPLY;
 
-// ÇÔ¼ö Æ÷ÀÎÅÍ Å¸ÀÔ ¼±¾ğ
+// í•¨ìˆ˜ í¬ì¸í„° íƒ€ì… ì„ ì–¸
 typedef HANDLE(WINAPI *pIcmpCreateFile)(void);
 typedef DWORD(WINAPI *pIcmpSendEcho)(
     HANDLE IcmpHandle, ULONG DestinationAddress,
@@ -32,9 +32,9 @@ typedef DWORD(WINAPI *pIcmpSendEcho)(
     LPVOID ReplyBuffer, DWORD ReplySize, DWORD Timeout);
 typedef BOOL(WINAPI *pIcmpCloseHandle)(HANDLE IcmpHandle);
 
-// µµ¸ŞÀÎ ÀÌ¸§ -> IPv4 ÁÖ¼Ò º¯È¯ ÇÔ¼ö
+// ë„ë©”ì¸ ì´ë¦„ -> IPv4 ì£¼ì†Œ ë³€í™˜ í•¨ìˆ˜
 BOOL GetIPAddr(char *name, IN_ADDR *addr);
-// ¼ÒÄÏ ÇÔ¼ö ¿À·ù Ãâ·Â
+// ì†Œì¼“ í•¨ìˆ˜ ì˜¤ë¥˜ ì¶œë ¥
 void err_display(char *msg);
 
 int main(int argc, char *argv[])
@@ -44,22 +44,22 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    // À©¼Ó ÃÊ±âÈ­
+    // ìœˆì† ì´ˆê¸°í™”
     WSADATA wsa;
     if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0) return 1;
 
-    // argv[1]À» 32ºñÆ® IP ÁÖ¼Ò·Î º¯È¯
+    // argv[1]ì„ 32ë¹„íŠ¸ IP ì£¼ì†Œë¡œ ë³€í™˜
     IN_ADDR addr;
     if (!GetIPAddr(argv[1], &addr)) return 1;
 
-    // ICMP.DLL ·Îµå
+    // ICMP.DLL ë¡œë“œ
     HINSTANCE hDLL = LoadLibrary("ICMP.DLL");
     if (hDLL == NULL) {
-        printf("[¿À·ù] ICMP.DLLÀ» Ã£À» ¼ö ¾ø½À´Ï´Ù!\n");
+        printf("[ì˜¤ë¥˜] ICMP.DLLì„ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤!\n");
         return 1;
     }
 
-    // Icmp*() ÇÔ¼ö ÁÖ¼Ò ¾ò±â
+    // Icmp*() í•¨ìˆ˜ ì£¼ì†Œ ì–»ê¸°
     pIcmpCreateFile IcmpCreateFile = (pIcmpCreateFile)
         GetProcAddress(hDLL, "IcmpCreateFile");
     pIcmpSendEcho IcmpSendEcho = (pIcmpSendEcho)
@@ -69,7 +69,7 @@ int main(int argc, char *argv[])
     if (IcmpCreateFile == NULL || IcmpSendEcho == NULL
         || IcmpCloseHandle == NULL)
     {
-        printf("[¿À·ù] Icmp*() ÇÔ¼ö¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù!\n");
+        printf("[ì˜¤ë¥˜] Icmp*() í•¨ìˆ˜ë¥¼ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤!\n");
         return 1;
     }
 
@@ -77,13 +77,13 @@ int main(int argc, char *argv[])
     HANDLE hIcmp = IcmpCreateFile();
     if (hIcmp == INVALID_HANDLE_VALUE) return 1;
 
-    // ¹öÆÛ Á¤ÀÇ
+    // ë²„í¼ ì •ì˜
     char request[32];
     int replysize = sizeof(ICMP_ECHO_REPLY) + sizeof(request) + 1500;
     ICMP_ECHO_REPLY *reply = (ICMP_ECHO_REPLY *)malloc(replysize);
 
     for (int i = 0; i < 4; i++) {
-        // Ping ÆĞÅ¶ º¸³»±â
+        // Ping íŒ¨í‚· ë³´ë‚´ê¸°
         DWORD retval = IcmpSendEcho(hIcmp, addr.s_addr, request,
             sizeof(request), NULL, reply, replysize, 1000);
         if (retval != 0) {
@@ -92,22 +92,22 @@ int main(int argc, char *argv[])
             printf("TTL = %d\n", reply->Options.Ttl);
         }
         else {
-            printf("[¿À·ù] ÀÀ´äÀÌ ¾ø°Å³ª ¿À·ù°¡ ¹ß»ıÇß½À´Ï´Ù!\n");
+            printf("[ì˜¤ë¥˜] ì‘ë‹µì´ ì—†ê±°ë‚˜ ì˜¤ë¥˜ê°€ ë°œìƒí–ˆìŠµë‹ˆë‹¤!\n");
         }
 
         Sleep(1000);
     }
 
-    // µ¿Àû ¸Ş¸ğ¸®¿Í DLL Á¦°Å
+    // ë™ì  ë©”ëª¨ë¦¬ì™€ DLL ì œê±°
     free(reply);
     FreeLibrary(hDLL);
 
-    // À©¼Ó Á¾·á
+    // ìœˆì† ì¢…ë£Œ
     WSACleanup();
     return 0;
 }
 
-// µµ¸ŞÀÎ ÀÌ¸§ -> IPv4 ÁÖ¼Ò º¯È¯ ÇÔ¼ö
+// ë„ë©”ì¸ ì´ë¦„ -> IPv4 ì£¼ì†Œ ë³€í™˜ í•¨ìˆ˜
 BOOL GetIPAddr(char *name, IN_ADDR *addr)
 {
     HOSTENT *ptr = gethostbyname(name);
@@ -121,7 +121,7 @@ BOOL GetIPAddr(char *name, IN_ADDR *addr)
     return TRUE;
 }
 
-// ¼ÒÄÏ ÇÔ¼ö ¿À·ù Ãâ·Â
+// ì†Œì¼“ í•¨ìˆ˜ ì˜¤ë¥˜ ì¶œë ¥
 void err_display(char *msg)
 {
     LPVOID lpMsgBuf;
