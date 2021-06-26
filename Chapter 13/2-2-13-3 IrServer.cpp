@@ -1,6 +1,6 @@
-#define _CRT_SECURE_NO_WARNINGS // ÃÖ½Å VC++ ÄÄÆÄÀÏ ½Ã °æ°í ¹æÁö
-#define _WIN32_WINDOWS 0x0410   // À©µµ¿ì 98 ÀÌ»ó
-#define _WIN32_WINNT   0x0500   // À©µµ¿ì 2000 ÀÌ»ó
+#define _CRT_SECURE_NO_WARNINGS // ìµœì‹  VC++ ì»´íŒŒì¼ ì‹œ ê²½ê³  ë°©ì§€
+#define _WIN32_WINDOWS 0x0410   // ìœˆë„ìš° 98 ì´ìƒ
+#define _WIN32_WINNT   0x0500   // ìœˆë„ìš° 2000 ì´ìƒ
 
 #pragma comment(lib, "ws2_32")
 #include <winsock2.h>
@@ -10,7 +10,7 @@
 
 #define BUFSIZE 512
 
-// ¼ÒÄÏ ÇÔ¼ö ¿À·ù Ãâ·Â ÈÄ Á¾·á
+// ì†Œì¼“ í•¨ìˆ˜ ì˜¤ë¥˜ ì¶œë ¥ í›„ ì¢…ë£Œ
 void err_quit(char *msg)
 {
     LPVOID lpMsgBuf;
@@ -24,7 +24,7 @@ void err_quit(char *msg)
     exit(1);
 }
 
-// ¼ÒÄÏ ÇÔ¼ö ¿À·ù Ãâ·Â
+// ì†Œì¼“ í•¨ìˆ˜ ì˜¤ë¥˜ ì¶œë ¥
 void err_display(char *msg)
 {
     LPVOID lpMsgBuf;
@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
 {
     int retval;
 
-    // À©¼Ó ÃÊ±âÈ­
+    // ìœˆì† ì´ˆê¸°í™”
     WSADATA wsa;
     if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0) return 1;
 
@@ -61,7 +61,7 @@ int main(int argc, char *argv[])
     retval = listen(listen_sock, SOMAXCONN);
     if (retval == SOCKET_ERROR) err_quit("listen()");
 
-    // µ¥ÀÌÅÍ Åë½Å¿¡ »ç¿ëÇÒ º¯¼ö
+    // ë°ì´í„° í†µì‹ ì— ì‚¬ìš©í•  ë³€ìˆ˜
     SOCKET client_sock;
     SOCKADDR_IRDA clientaddr;
     int addrlen;
@@ -75,11 +75,11 @@ int main(int argc, char *argv[])
             err_display("accept()");
             break;
         }
-        printf("\n[IrDA ¼­¹ö] Å¬¶óÀÌ¾ğÆ® Á¢¼Ó: %s\n", clientaddr.irdaServiceName);
+        printf("\n[IrDA ì„œë²„] í´ë¼ì´ì–¸íŠ¸ ì ‘ì†: %s\n", clientaddr.irdaServiceName);
 
-        // Å¬¶óÀÌ¾ğÆ®¿Í µ¥ÀÌÅÍ Åë½Å
+        // í´ë¼ì´ì–¸íŠ¸ì™€ ë°ì´í„° í†µì‹ 
         while (1) {
-            // µ¥ÀÌÅÍ ¹Ş±â
+            // ë°ì´í„° ë°›ê¸°
             retval = recv(client_sock, buf, BUFSIZE, 0);
             if (retval == SOCKET_ERROR) {
                 err_display("recv()");
@@ -88,11 +88,11 @@ int main(int argc, char *argv[])
             else if (retval == 0)
                 break;
 
-            // ¹ŞÀº µ¥ÀÌÅÍ Ãâ·Â
+            // ë°›ì€ ë°ì´í„° ì¶œë ¥
             buf[retval] = '\0';
-            printf("[¹ŞÀº µ¥ÀÌÅÍ] %s\n", buf);
+            printf("[ë°›ì€ ë°ì´í„°] %s\n", buf);
 
-            // µ¥ÀÌÅÍ º¸³»±â
+            // ë°ì´í„° ë³´ë‚´ê¸°
             retval = send(client_sock, buf, retval, 0);
             if (retval == SOCKET_ERROR) {
                 err_display("send()");
@@ -102,13 +102,13 @@ int main(int argc, char *argv[])
 
         // closesocket()
         closesocket(client_sock);
-        printf("[IrDA ¼­¹ö] Å¬¶óÀÌ¾ğÆ® Á¾·á: %s\n", clientaddr.irdaServiceName);
+        printf("[IrDA ì„œë²„] í´ë¼ì´ì–¸íŠ¸ ì¢…ë£Œ: %s\n", clientaddr.irdaServiceName);
     }
 
     // closesocket()
     closesocket(listen_sock);
 
-    // À©¼Ó Á¾·á
+    // ìœˆì† ì¢…ë£Œ
     WSACleanup();
     return 0;
 }
