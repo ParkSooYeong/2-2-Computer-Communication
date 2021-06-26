@@ -1,4 +1,4 @@
-#define _WINSOCK_DEPRECATED_NO_WARNINGS // ÃÖ½Å VC++ ÄÄÆÄÀÏ ½Ã °æ°í ¹æÁö
+#define _WINSOCK_DEPRECATED_NO_WARNINGS // ìµœì‹  VC++ ì»´íŒŒì¼ ì‹œ ê²½ê³  ë°©ì§€
 #pragma comment(lib, "ws2_32")
 #include <winsock2.h>
 #include <ws2bth.h>
@@ -8,41 +8,41 @@ int main(int argc, char *argv[])
 {
     int retval;
 
-    // À©¼Ó ÃÊ±âÈ­
+    // ìœˆì† ì´ˆê¸°í™”
     WSADATA wsa;
     if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0) return 1;
 
-    // ºí·çÅõ½º ÀåÄ¡ °Ë»ö ÁØºñ
+    // ë¸”ë£¨íˆ¬ìŠ¤ ì¥ì¹˜ ê²€ìƒ‰ ì¤€ë¹„
     DWORD qslen = sizeof(WSAQUERYSET);
     WSAQUERYSET *qs = (WSAQUERYSET *)malloc(qslen);
     ZeroMemory(qs, qslen);
     qs->dwSize = qslen;
     qs->dwNameSpace = NS_BTH;
-    DWORD flags = LUP_CONTAINERS; /* ÇÊ¼ö! */
+    DWORD flags = LUP_CONTAINERS; /* í•„ìˆ˜! */
     flags |= LUP_FLUSHCACHE | LUP_RETURN_NAME | LUP_RETURN_ADDR;
 
-    // ºí·çÅõ½º ÀåÄ¡ °Ë»ö ½ÃÀÛ
+    // ë¸”ë£¨íˆ¬ìŠ¤ ì¥ì¹˜ ê²€ìƒ‰ ì‹œì‘
     HANDLE hLookup;
     retval = WSALookupServiceBegin(qs, flags, &hLookup);
     if (retval == SOCKET_ERROR) {
-        printf("[¿À·ù] ¹ß°ßµÈ ºí·çÅõ½º ÀåÄ¡ ¾øÀ½!\n");
+        printf("[ì˜¤ë¥˜] ë°œê²¬ëœ ë¸”ë£¨íˆ¬ìŠ¤ ì¥ì¹˜ ì—†ìŒ!\n");
         exit(1);
     }
 
-    // °Ë»öµÈ ºí·çÅõ½º ÀåÄ¡ Á¤º¸ Ãâ·Â
+    // ê²€ìƒ‰ëœ ë¸”ë£¨íˆ¬ìŠ¤ ì¥ì¹˜ ì •ë³´ ì¶œë ¥
     SOCKADDR_BTH *sa = NULL;
     bool done = false;
     while (!done) {
         retval = WSALookupServiceNext(hLookup, flags, &qslen, qs);
         if (retval == NO_ERROR) {
-            // ºí·çÅõ½º ÀåÄ¡ Á¤º¸¸¦ ´ã°í ÀÖ´Â ¼ÒÄÏ ÁÖ¼Ò ±¸Á¶Ã¼¿¡ Á¢±Ù
+            // ë¸”ë£¨íˆ¬ìŠ¤ ì¥ì¹˜ ì •ë³´ë¥¼ ë‹´ê³  ìˆëŠ” ì†Œì¼“ ì£¼ì†Œ êµ¬ì¡°ì²´ì— ì ‘ê·¼
             sa = (SOCKADDR_BTH *)qs->lpcsaBuffer->RemoteAddr.lpSockaddr;
-            // ºí·çÅõ½º ÀåÄ¡ ÁÖ¼Ò¸¦ ¹®ÀÚ¿­·Î Ãâ·Â
+            // ë¸”ë£¨íˆ¬ìŠ¤ ì¥ì¹˜ ì£¼ì†Œë¥¼ ë¬¸ìì—´ë¡œ ì¶œë ¥
             char addr[40] = { 0 };
             DWORD addrlen = sizeof(addr);
             WSAAddressToString((SOCKADDR *)sa, sizeof(SOCKADDR_BTH),
                 NULL, addr, &addrlen);
-            printf("ºí·çÅõ½º ÀåÄ¡ ¹ß°ß! %s - %s\n",
+            printf("ë¸”ë£¨íˆ¬ìŠ¤ ì¥ì¹˜ ë°œê²¬! %s - %s\n",
                 addr, qs->lpszServiceInstanceName);
         }
         else {
@@ -56,11 +56,11 @@ int main(int argc, char *argv[])
         }
     }
 
-    // ºí·çÅõ½º ÀåÄ¡ °Ë»ö Á¾·á
+    // ë¸”ë£¨íˆ¬ìŠ¤ ì¥ì¹˜ ê²€ìƒ‰ ì¢…ë£Œ
     WSALookupServiceEnd(hLookup);
     free(qs);
 
-    // À©¼Ó Á¾·á
+    // ìœˆì† ì¢…ë£Œ
     WSACleanup();
     return 0;
 }
