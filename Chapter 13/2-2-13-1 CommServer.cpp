@@ -21,17 +21,17 @@ int main(int argc, char *argv[])
 {
     int retval;
 
-    // Á÷·Ä Æ÷Æ® ¿­±â
+    // ì§ë ¬ í¬íŠ¸ ì—´ê¸°
     HANDLE hComm;
     hComm = CreateFile("COM1", GENERIC_READ | GENERIC_WRITE,
         0, NULL, OPEN_EXISTING, 0, NULL);
     if (hComm == INVALID_HANDLE_VALUE) err_quit("CreateFile()");
 
-    // Á÷·Ä Æ÷Æ® ¼³Á¤°ª ¾ò±â
+    // ì§ë ¬ í¬íŠ¸ ì„¤ì •ê°’ ì–»ê¸°
     DCB dcb;
     if (!GetCommState(hComm, &dcb)) err_quit("GetCommState()");
 
-    // Á÷·Ä Æ÷Æ® ¼³Á¤°ª º¯°æÇÏ±â
+    // ì§ë ¬ í¬íŠ¸ ì„¤ì •ê°’ ë³€ê²½í•˜ê¸°
     dcb.BaudRate = CBR_57600;
     dcb.ByteSize = 8;
     dcb.fParity = FALSE;
@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
     dcb.StopBits = ONESTOPBIT;
     if (!SetCommState(hComm, &dcb)) err_quit("SetCommState()");
 
-    // ÀĞ±â¿Í ¾²±â Å¸ÀÓ¾Æ¿ô ¼³Á¤ÇÏ±â
+    // ì½ê¸°ì™€ ì“°ê¸° íƒ€ì„ì•„ì›ƒ ì„¤ì •í•˜ê¸°
     COMMTIMEOUTS timeouts;
     timeouts.ReadIntervalTimeout = 0;
     timeouts.ReadTotalTimeoutMultiplier = 0;
@@ -48,26 +48,26 @@ int main(int argc, char *argv[])
     timeouts.WriteTotalTimeoutConstant = 0;
     if (!SetCommTimeouts(hComm, &timeouts)) err_quit("SetCommTimeouts()");
 
-    // µ¥ÀÌÅÍ Åë½Å¿¡ »ç¿ëÇÒ º¯¼ö
+    // ë°ì´í„° í†µì‹ ì— ì‚¬ìš©í•  ë³€ìˆ˜
     char buf[BUFSIZE + 1];
     DWORD BytesRead, BytesWritten;
 
-    // Å¬¶óÀÌ¾ğÆ®¿Í µ¥ÀÌÅÍ Åë½Å
+    // í´ë¼ì´ì–¸íŠ¸ì™€ ë°ì´í„° í†µì‹ 
     while (1) {
-        // µ¥ÀÌÅÍ ¹Ş±â
+        // ë°ì´í„° ë°›ê¸°
         retval = ReadFile(hComm, buf, BUFSIZE, &BytesRead, NULL);
         if (retval == 0) err_quit("ReadFile()");
 
-        // ¹ŞÀº µ¥ÀÌÅÍ Ãâ·Â
+        // ë°›ì€ ë°ì´í„° ì¶œë ¥
         buf[BytesRead] = '\0';
-        printf("[¹ŞÀº µ¥ÀÌÅÍ] %s\n", buf);
+        printf("[ë°›ì€ ë°ì´í„°] %s\n", buf);
 
-        // µ¥ÀÌÅÍ º¸³»±â
+        // ë°ì´í„° ë³´ë‚´ê¸°
         retval = WriteFile(hComm, buf, BUFSIZE, &BytesWritten, NULL);
         if (retval == 0) err_quit("WriteFile()");
     }
 
-    // Á÷·Ä Æ÷Æ® ´İ±â
+    // ì§ë ¬ í¬íŠ¸ ë‹«ê¸°
     CloseHandle(hComm);
     return 0;
 }
