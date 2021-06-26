@@ -1,4 +1,4 @@
-#define _WINSOCK_DEPRECATED_NO_WARNINGS // ÃÖ½Å VC++ ÄÄÆÄÀÏ ½Ã °æ°í ¹æÁö
+#define _WINSOCK_DEPRECATED_NO_WARNINGS // ìµœì‹  VC++ ì»´íŒŒì¼ ì‹œ ê²½ê³  ë°©ì§€
 #pragma comment(lib, "ws2_32")
 #include <winsock2.h>
 #include <ws2bth.h>
@@ -12,7 +12,7 @@
 DEFINE_GUID(BthServer_Service, 0x4672de25, 0x588d, 0x48af,
     0x80, 0x73, 0x5f, 0x2b, 0x7b, 0x0, 0x60, 0x1f);
 
-// ¼ÒÄÏ ÇÔ¼ö ¿À·ù Ãâ·Â ÈÄ Á¾·á
+// ì†Œì¼“ í•¨ìˆ˜ ì˜¤ë¥˜ ì¶œë ¥ í›„ ì¢…ë£Œ
 void err_quit(char *msg)
 {
     LPVOID lpMsgBuf;
@@ -26,7 +26,7 @@ void err_quit(char *msg)
     exit(1);
 }
 
-// ¼ÒÄÏ ÇÔ¼ö ¿À·ù Ãâ·Â
+// ì†Œì¼“ í•¨ìˆ˜ ì˜¤ë¥˜ ì¶œë ¥
 void err_display(char *msg)
 {
     LPVOID lpMsgBuf;
@@ -43,14 +43,14 @@ int main(int argc, char *argv[])
 {
     int retval;
 
-    // À©¼Ó ÃÊ±âÈ­
+    // ìœˆì† ì´ˆê¸°í™”
     WSADATA wsa;
     if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0) return 1;
 
-    // ºí·çÅõ½º ÀåÄ¡ °Ë»ö(»ı·«)
-    // - ÆíÀÇ»ó SERVERADDR ¸ÅÅ©·Î »ó¼ö·Î ´ë½ÅÇÑ´Ù.
+    // ë¸”ë£¨íˆ¬ìŠ¤ ì¥ì¹˜ ê²€ìƒ‰(ìƒëµ)
+    // - í¸ì˜ìƒ SERVERADDR ë§¤í¬ë¡œ ìƒìˆ˜ë¡œ ëŒ€ì‹ í•œë‹¤.
 
-    // ºí·çÅõ½º ¼­ºñ½º °Ë»ö ÁØºñ
+    // ë¸”ë£¨íˆ¬ìŠ¤ ì„œë¹„ìŠ¤ ê²€ìƒ‰ ì¤€ë¹„
     DWORD qslen = sizeof(WSAQUERYSET);
     WSAQUERYSET *qs = (WSAQUERYSET *)malloc(qslen);
     ZeroMemory(qs, qslen);
@@ -60,24 +60,24 @@ int main(int argc, char *argv[])
     qs->lpszContext = SERVERADDR;
     DWORD flags = LUP_FLUSHCACHE | LUP_RETURN_ADDR;
 
-    // ºí·çÅõ½º ¼­ºñ½º °Ë»ö ½ÃÀÛ
+    // ë¸”ë£¨íˆ¬ìŠ¤ ì„œë¹„ìŠ¤ ê²€ìƒ‰ ì‹œì‘
     HANDLE hLookup;
     retval = WSALookupServiceBegin(qs, flags, &hLookup);
     if (retval == SOCKET_ERROR) {
-        printf("[¿À·ù] ¹ß°ßµÈ ºí·çÅõ½º ÀåÄ¡ ¾øÀ½!\n");
+        printf("[ì˜¤ë¥˜] ë°œê²¬ëœ ë¸”ë£¨íˆ¬ìŠ¤ ì¥ì¹˜ ì—†ìŒ!\n");
         exit(1);
     }
 
-    // °Ë»öµÈ ºí·çÅõ½º ¼­ºñ½º Á¤º¸ È®ÀÎ
+    // ê²€ìƒ‰ëœ ë¸”ë£¨íˆ¬ìŠ¤ ì„œë¹„ìŠ¤ ì •ë³´ í™•ì¸
     SOCKADDR_BTH *sa = NULL;
     int serverport = 0;
     bool done = false;
     while (!done) {
         retval = WSALookupServiceNext(hLookup, flags, &qslen, qs);
         if (retval == NO_ERROR) {
-            // ºí·çÅõ½º ÀåÄ¡ Á¤º¸¸¦ ´ã°í ÀÖ´Â ¼ÒÄÏ ÁÖ¼Ò ±¸Á¶Ã¼¿¡ Á¢±Ù
+            // ë¸”ë£¨íˆ¬ìŠ¤ ì¥ì¹˜ ì •ë³´ë¥¼ ë‹´ê³  ìˆëŠ” ì†Œì¼“ ì£¼ì†Œ êµ¬ì¡°ì²´ì— ì ‘ê·¼
             sa = (SOCKADDR_BTH *)qs->lpcsaBuffer->RemoteAddr.lpSockaddr;
-            // ¼­¹ö Æ÷Æ® ¹øÈ£ ÀúÀå ÈÄ Å»Ãâ
+            // ì„œë²„ í¬íŠ¸ ë²ˆí˜¸ ì €ì¥ í›„ íƒˆì¶œ
             serverport = sa->port;
             break;
         }
@@ -92,11 +92,11 @@ int main(int argc, char *argv[])
         }
     }
     if (sa == NULL) {
-        printf("[¿À·ù] ºí·çÅõ½º ÀåÄ¡(%s)¿¡¼­ ½ÇÇà ÁßÀÎ ¼­¹ö ¾øÀ½!\n", SERVERADDR);
+        printf("[ì˜¤ë¥˜] ë¸”ë£¨íˆ¬ìŠ¤ ì¥ì¹˜(%s)ì—ì„œ ì‹¤í–‰ ì¤‘ì¸ ì„œë²„ ì—†ìŒ!\n", SERVERADDR);
         exit(1);
     }
 
-    // ºí·çÅõ½º ¼­ºñ½º °Ë»ö Á¾·á
+    // ë¸”ë£¨íˆ¬ìŠ¤ ì„œë¹„ìŠ¤ ê²€ìƒ‰ ì¢…ë£Œ
     WSALookupServiceEnd(hLookup);
     free(qs);
 
@@ -114,35 +114,35 @@ int main(int argc, char *argv[])
     retval = connect(sock, (SOCKADDR *)&serveraddr, sizeof(serveraddr));
     if (retval == SOCKET_ERROR) err_quit("connect()");
 
-    // µ¥ÀÌÅÍ Åë½Å¿¡ »ç¿ëÇÒ º¯¼ö
+    // ë°ì´í„° í†µì‹ ì— ì‚¬ìš©í•  ë³€ìˆ˜
     char buf[BUFSIZE + 1];
     int len;
 
-    // ¼­¹ö¿Í µ¥ÀÌÅÍ Åë½Å
+    // ì„œë²„ì™€ ë°ì´í„° í†µì‹ 
     while (1) {
-        // µ¥ÀÌÅÍ ÀÔ·Â
-        printf("\n[º¸³¾ µ¥ÀÌÅÍ] ");
+        // ë°ì´í„° ì…ë ¥
+        printf("\n[ë³´ë‚¼ ë°ì´í„°] ");
         if (fgets(buf, BUFSIZE + 1, stdin) == NULL)
             break;
 
-        // '\n' ¹®ÀÚ Á¦°Å
+        // '\n' ë¬¸ì ì œê±°
         len = strlen(buf);
         if (buf[len - 1] == '\n') buf[len - 1] = '\0';
         if (strlen(buf) == 0) break;
 
-        // µ¥ÀÌÅÍ º¸³»±â
+        // ë°ì´í„° ë³´ë‚´ê¸°
         retval = send(sock, buf, strlen(buf), 0);
         if (retval == SOCKET_ERROR) {
             err_display("send()");
             break;
         }
-        printf("[ºí·çÅõ½º Å¬¶óÀÌ¾ğÆ®] %d¹ÙÀÌÆ®¸¦ º¸³Â½À´Ï´Ù.\n", retval);
+        printf("[ë¸”ë£¨íˆ¬ìŠ¤ í´ë¼ì´ì–¸íŠ¸] %dë°”ì´íŠ¸ë¥¼ ë³´ëƒˆìŠµë‹ˆë‹¤.\n", retval);
     }
 
     // closesocket()
     closesocket(sock);
 
-    // À©¼Ó Á¾·á
+    // ìœˆì† ì¢…ë£Œ
     WSACleanup();
     return 0;
 }
