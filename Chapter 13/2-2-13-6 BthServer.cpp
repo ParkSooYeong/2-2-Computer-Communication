@@ -1,4 +1,4 @@
-#define _WINSOCK_DEPRECATED_NO_WARNINGS // ÃÖ½Å VC++ ÄÄÆÄÀÏ ½Ã °æ°í ¹æÁö
+#define _WINSOCK_DEPRECATED_NO_WARNINGS // ìµœì‹  VC++ ì»´íŒŒì¼ ì‹œ ê²½ê³  ë°©ì§€
 #pragma comment(lib, "ws2_32")
 #include <winsock2.h>
 #include <ws2bth.h>
@@ -11,7 +11,7 @@
 DEFINE_GUID(BthServer_Service, 0x4672de25, 0x588d, 0x48af,
     0x80, 0x73, 0x5f, 0x2b, 0x7b, 0x0, 0x60, 0x1f);
 
-// ¼ÒÄÏ ÇÔ¼ö ¿À·ù Ãâ·Â ÈÄ Á¾·á
+// ì†Œì¼“ í•¨ìˆ˜ ì˜¤ë¥˜ ì¶œë ¥ í›„ ì¢…ë£Œ
 void err_quit(char *msg)
 {
     LPVOID lpMsgBuf;
@@ -25,7 +25,7 @@ void err_quit(char *msg)
     exit(1);
 }
 
-// ¼ÒÄÏ ÇÔ¼ö ¿À·ù Ãâ·Â
+// ì†Œì¼“ í•¨ìˆ˜ ì˜¤ë¥˜ ì¶œë ¥
 void err_display(char *msg)
 {
     LPVOID lpMsgBuf;
@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
 {
     int retval;
 
-    // À©¼Ó ÃÊ±âÈ­
+    // ìœˆì† ì´ˆê¸°í™”
     WSADATA wsa;
     if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0) return 1;
 
@@ -59,13 +59,13 @@ int main(int argc, char *argv[])
     retval = bind(listen_sock, (SOCKADDR *)&serveraddr, sizeof(serveraddr));
     if (retval == SOCKET_ERROR) err_quit("bind()");
 
-    // ¼­¹ö Æ÷Æ® ¹øÈ£ Ãâ·Â(¿É¼Ç)
+    // ì„œë²„ í¬íŠ¸ ë²ˆí˜¸ ì¶œë ¥(ì˜µì…˜)
     int addrlen = sizeof(serveraddr);
     retval = getsockname(listen_sock, (SOCKADDR *)&serveraddr, &addrlen);
     if (retval == SOCKET_ERROR) err_quit("bind()");
-    printf("[ºí·çÅõ½º ¼­¹ö] »ç¿ë ÁßÀÎ Æ÷Æ® ¹øÈ£ : %d\n", serveraddr.port);
+    printf("[ë¸”ë£¨íˆ¬ìŠ¤ ì„œë²„] ì‚¬ìš© ì¤‘ì¸ í¬íŠ¸ ë²ˆí˜¸ : %d\n", serveraddr.port);
 
-    // ¼­¹ö Á¤º¸ µî·Ï(ÇÊ¼ö)
+    // ì„œë²„ ì •ë³´ ë“±ë¡(í•„ìˆ˜)
     CSADDR_INFO addrinfo;
     addrinfo.LocalAddr.lpSockaddr = (SOCKADDR *)&serveraddr;
     addrinfo.LocalAddr.iSockaddrLength = sizeof(serveraddr);
@@ -89,7 +89,7 @@ int main(int argc, char *argv[])
     retval = listen(listen_sock, 1);
     if (retval == SOCKET_ERROR) err_quit("listen()");
 
-    // µ¥ÀÌÅÍ Åë½Å¿¡ »ç¿ëÇÒ º¯¼ö
+    // ë°ì´í„° í†µì‹ ì— ì‚¬ìš©í•  ë³€ìˆ˜
     SOCKET client_sock;
     SOCKADDR_BTH clientaddr;
     char buf[BUFSIZE + 1];
@@ -103,11 +103,11 @@ int main(int argc, char *argv[])
             break;
         }
 
-        printf("\n[ºí·çÅõ½º ¼­¹ö] Å¬¶óÀÌ¾ğÆ® Á¢¼Ó!\n");
+        printf("\n[ë¸”ë£¨íˆ¬ìŠ¤ ì„œë²„] í´ë¼ì´ì–¸íŠ¸ ì ‘ì†!\n");
 
-        // Å¬¶óÀÌ¾ğÆ®¿Í µ¥ÀÌÅÍ Åë½Å
+        // í´ë¼ì´ì–¸íŠ¸ì™€ ë°ì´í„° í†µì‹ 
         while (1) {
-            // µ¥ÀÌÅÍ ¹Ş±â
+            // ë°ì´í„° ë°›ê¸°
             retval = recv(client_sock, buf, BUFSIZE, 0);
             if (retval == SOCKET_ERROR) {
                 err_display("recv()");
@@ -116,20 +116,20 @@ int main(int argc, char *argv[])
             else if (retval == 0)
                 break;
 
-            // ¹ŞÀº µ¥ÀÌÅÍ Ãâ·Â
+            // ë°›ì€ ë°ì´í„° ì¶œë ¥
             buf[retval] = '\0';
-            printf("[ºí·çÅõ½º ¼­¹ö] %s\n", buf);
+            printf("[ë¸”ë£¨íˆ¬ìŠ¤ ì„œë²„] %s\n", buf);
         }
 
         // closesocket()
         closesocket(client_sock);
-        printf("[ºí·çÅõ½º ¼­¹ö] Å¬¶óÀÌ¾ğÆ® Á¾·á!\n");
+        printf("[ë¸”ë£¨íˆ¬ìŠ¤ ì„œë²„] í´ë¼ì´ì–¸íŠ¸ ì¢…ë£Œ!\n");
     }
 
     // closesocket()
     closesocket(listen_sock);
 
-    // À©¼Ó Á¾·á
+    // ìœˆì† ì¢…ë£Œ
     WSACleanup();
     return 0;
 }
