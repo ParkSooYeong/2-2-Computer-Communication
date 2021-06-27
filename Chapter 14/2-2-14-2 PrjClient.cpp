@@ -1,5 +1,5 @@
-#define _CRT_SECURE_NO_WARNINGS         // ÃÖ½Å VC++ ÄÄÆÄÀÏ ½Ã °æ°í ¹æÁö
-#define _WINSOCK_DEPRECATED_NO_WARNINGS // ÃÖ½Å VC++ ÄÄÆÄÀÏ ½Ã °æ°í ¹æÁö
+#define _CRT_SECURE_NO_WARNINGS         // ìµœì‹  VC++ ì»´íŒŒì¼ ì‹œ ê²½ê³  ë°©ì§€
+#define _WINSOCK_DEPRECATED_NO_WARNINGS // ìµœì‹  VC++ ì»´íŒŒì¼ ì‹œ ê²½ê³  ë°©ì§€
 #pragma comment(lib, "ws2_32")
 #include <winsock2.h>
 #include <ws2tcpip.h>
@@ -12,15 +12,15 @@
 #define SERVERIPV6  "::1"
 #define SERVERPORT  9000
 
-#define BUFSIZE     256                    // Àü¼Û ¸Ş½ÃÁö ÀüÃ¼ Å©±â
-#define MSGSIZE     (BUFSIZE-sizeof(int))  // Ã¤ÆÃ ¸Ş½ÃÁö ÃÖ´ë ±æÀÌ
+#define BUFSIZE     256                    // ì „ì†¡ ë©”ì‹œì§€ ì „ì²´ í¬ê¸°
+#define MSGSIZE     (BUFSIZE-sizeof(int))  // ì±„íŒ… ë©”ì‹œì§€ ìµœëŒ€ ê¸¸ì´
 
-#define CHATTING    1000                   // ¸Ş½ÃÁö Å¸ÀÔ: Ã¤ÆÃ
-#define DRAWLINE    1001                   // ¸Ş½ÃÁö Å¸ÀÔ: ¼± ±×¸®±â
+#define CHATTING    1000                   // ë©”ì‹œì§€ íƒ€ì…: ì±„íŒ…
+#define DRAWLINE    1001                   // ë©”ì‹œì§€ íƒ€ì…: ì„  ê·¸ë¦¬ê¸°
 
-#define WM_DRAWIT   (WM_USER+1)            // »ç¿ëÀÚ Á¤ÀÇ À©µµ¿ì ¸Ş½ÃÁö
+#define WM_DRAWIT   (WM_USER+1)            // ì‚¬ìš©ì ì •ì˜ ìœˆë„ìš° ë©”ì‹œì§€
 
-// °øÅë ¸Ş½ÃÁö Çü½Ä
+// ê³µí†µ ë©”ì‹œì§€ í˜•ì‹
 // sizeof(COMM_MSG) == 256
 struct COMM_MSG
 {
@@ -28,7 +28,7 @@ struct COMM_MSG
     char dummy[MSGSIZE];
 };
 
-// Ã¤ÆÃ ¸Ş½ÃÁö Çü½Ä
+// ì±„íŒ… ë©”ì‹œì§€ í˜•ì‹
 // sizeof(CHAT_MSG) == 256
 struct CHAT_MSG
 {
@@ -36,7 +36,7 @@ struct CHAT_MSG
     char buf[MSGSIZE];
 };
 
-// ¼± ±×¸®±â ¸Ş½ÃÁö Çü½Ä
+// ì„  ê·¸ë¦¬ê¸° ë©”ì‹œì§€ í˜•ì‹
 // sizeof(DRAWLINE_MSG) == 256
 struct DRAWLINE_MSG
 {
@@ -47,70 +47,70 @@ struct DRAWLINE_MSG
     char dummy[BUFSIZE - 6 * sizeof(int)];
 };
 
-static HINSTANCE     g_hInst; // ÀÀ¿ë ÇÁ·Î±×·¥ ÀÎ½ºÅÏ½º ÇÚµé
-static HWND          g_hDrawWnd; // ±×¸²À» ±×¸± À©µµ¿ì
-static HWND          g_hButtonSendMsg; // '¸Ş½ÃÁö Àü¼Û' ¹öÆ°
-static HWND          g_hEditStatus; // ¹ŞÀº ¸Ş½ÃÁö Ãâ·Â
-static char          g_ipaddr[64]; // ¼­¹ö IP ÁÖ¼Ò
-static u_short       g_port; // ¼­¹ö Æ÷Æ® ¹øÈ£
-static BOOL          g_isIPv6; // IPv4 or IPv6 ÁÖ¼Ò?
-static HANDLE        g_hClientThread; // ½º·¹µå ÇÚµé
-static volatile BOOL g_bStart; // Åë½Å ½ÃÀÛ ¿©ºÎ
-static SOCKET        g_sock; // Å¬¶óÀÌ¾ğÆ® ¼ÒÄÏ
-static HANDLE        g_hReadEvent, g_hWriteEvent; // ÀÌº¥Æ® ÇÚµé
-static CHAT_MSG      g_chatmsg; // Ã¤ÆÃ ¸Ş½ÃÁö ÀúÀå
-static DRAWLINE_MSG  g_drawmsg; // ¼± ±×¸®±â ¸Ş½ÃÁö ÀúÀå
-static int           g_drawcolor; // ¼± ±×¸®±â »ö»ó
+static HINSTANCE     g_hInst; // ì‘ìš© í”„ë¡œê·¸ë¨ ì¸ìŠ¤í„´ìŠ¤ í•¸ë“¤
+static HWND          g_hDrawWnd; // ê·¸ë¦¼ì„ ê·¸ë¦´ ìœˆë„ìš°
+static HWND          g_hButtonSendMsg; // 'ë©”ì‹œì§€ ì „ì†¡' ë²„íŠ¼
+static HWND          g_hEditStatus; // ë°›ì€ ë©”ì‹œì§€ ì¶œë ¥
+static char          g_ipaddr[64]; // ì„œë²„ IP ì£¼ì†Œ
+static u_short       g_port; // ì„œë²„ í¬íŠ¸ ë²ˆí˜¸
+static BOOL          g_isIPv6; // IPv4 or IPv6 ì£¼ì†Œ?
+static HANDLE        g_hClientThread; // ìŠ¤ë ˆë“œ í•¸ë“¤
+static volatile BOOL g_bStart; // í†µì‹  ì‹œì‘ ì—¬ë¶€
+static SOCKET        g_sock; // í´ë¼ì´ì–¸íŠ¸ ì†Œì¼“
+static HANDLE        g_hReadEvent, g_hWriteEvent; // ì´ë²¤íŠ¸ í•¸ë“¤
+static CHAT_MSG      g_chatmsg; // ì±„íŒ… ë©”ì‹œì§€ ì €ì¥
+static DRAWLINE_MSG  g_drawmsg; // ì„  ê·¸ë¦¬ê¸° ë©”ì‹œì§€ ì €ì¥
+static int           g_drawcolor; // ì„  ê·¸ë¦¬ê¸° ìƒ‰ìƒ
 
-// ´ëÈ­»óÀÚ ÇÁ·Î½ÃÀú
+// ëŒ€í™”ìƒì í”„ë¡œì‹œì €
 BOOL CALLBACK DlgProc(HWND, UINT, WPARAM, LPARAM);
-// ¼ÒÄÏ Åë½Å ½º·¹µå ÇÔ¼ö
+// ì†Œì¼“ í†µì‹  ìŠ¤ë ˆë“œ í•¨ìˆ˜
 DWORD WINAPI ClientMain(LPVOID arg);
 DWORD WINAPI ReadThread(LPVOID arg);
 DWORD WINAPI WriteThread(LPVOID arg);
-// ÀÚ½Ä À©µµ¿ì ÇÁ·Î½ÃÀú
+// ìì‹ ìœˆë„ìš° í”„ë¡œì‹œì €
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
-// ÆíÁı ÄÁÆ®·Ñ Ãâ·Â ÇÔ¼ö
+// í¸ì§‘ ì»¨íŠ¸ë¡¤ ì¶œë ¥ í•¨ìˆ˜
 void DisplayText(char *fmt, ...);
-// »ç¿ëÀÚ Á¤ÀÇ µ¥ÀÌÅÍ ¼ö½Å ÇÔ¼ö
+// ì‚¬ìš©ì ì •ì˜ ë°ì´í„° ìˆ˜ì‹  í•¨ìˆ˜
 int recvn(SOCKET s, char *buf, int len, int flags);
-// ¿À·ù Ãâ·Â ÇÔ¼ö
+// ì˜¤ë¥˜ ì¶œë ¥ í•¨ìˆ˜
 void err_quit(char *msg);
 void err_display(char *msg);
 
-// ¸ŞÀÎ ÇÔ¼ö
+// ë©”ì¸ í•¨ìˆ˜
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     LPSTR lpCmdLine, int nCmdShow)
 {
-    // À©¼Ó ÃÊ±âÈ­
+    // ìœˆì† ì´ˆê¸°í™”
     WSADATA wsa;
     if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0) return 1;
 
-    // ÀÌº¥Æ® »ı¼º
+    // ì´ë²¤íŠ¸ ìƒì„±
     g_hReadEvent = CreateEvent(NULL, FALSE, TRUE, NULL);
     if (g_hReadEvent == NULL) return 1;
     g_hWriteEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
     if (g_hWriteEvent == NULL) return 1;
 
-    // º¯¼ö ÃÊ±âÈ­(ÀÏºÎ)
+    // ë³€ìˆ˜ ì´ˆê¸°í™”(ì¼ë¶€)
     g_chatmsg.type = CHATTING;
     g_drawmsg.type = DRAWLINE;
     g_drawmsg.color = RGB(255, 0, 0);
 
-    // ´ëÈ­»óÀÚ »ı¼º
+    // ëŒ€í™”ìƒì ìƒì„±
     g_hInst = hInstance;
     DialogBox(hInstance, MAKEINTRESOURCE(IDD_DIALOG1), NULL, DlgProc);
 
-    // ÀÌº¥Æ® Á¦°Å
+    // ì´ë²¤íŠ¸ ì œê±°
     CloseHandle(g_hReadEvent);
     CloseHandle(g_hWriteEvent);
 
-    // À©¼Ó Á¾·á
+    // ìœˆì† ì¢…ë£Œ
     WSACleanup();
     return 0;
 }
 
-// ´ëÈ­»óÀÚ ÇÁ·Î½ÃÀú
+// ëŒ€í™”ìƒì í”„ë¡œì‹œì €
 BOOL CALLBACK DlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     static HWND hButtonIsIPv6;
@@ -124,7 +124,7 @@ BOOL CALLBACK DlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
     switch (uMsg) {
     case WM_INITDIALOG:
-        // ÄÁÆ®·Ñ ÇÚµé ¾ò±â
+        // ì»¨íŠ¸ë¡¤ í•¸ë“¤ ì–»ê¸°
         hButtonIsIPv6 = GetDlgItem(hDlg, IDC_ISIPV6);
         hEditIPaddr = GetDlgItem(hDlg, IDC_IPADDR);
         hEditPort = GetDlgItem(hDlg, IDC_PORT);
@@ -136,7 +136,7 @@ BOOL CALLBACK DlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
         hColorGreen = GetDlgItem(hDlg, IDC_COLORGREEN);
         hColorBlue = GetDlgItem(hDlg, IDC_COLORBLUE);
 
-        // ÄÁÆ®·Ñ ÃÊ±âÈ­
+        // ì»¨íŠ¸ë¡¤ ì´ˆê¸°í™”
         SendMessage(hEditMsg, EM_SETLIMITTEXT, MSGSIZE, 0);
         EnableWindow(g_hButtonSendMsg, FALSE);
         SetDlgItemText(hDlg, IDC_IPADDR, SERVERIPV4);
@@ -145,7 +145,7 @@ BOOL CALLBACK DlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
         SendMessage(hColorGreen, BM_SETCHECK, BST_UNCHECKED, 0);
         SendMessage(hColorBlue, BM_SETCHECK, BST_UNCHECKED, 0);
 
-        // À©µµ¿ì Å¬·¡½º µî·Ï
+        // ìœˆë„ìš° í´ë˜ìŠ¤ ë“±ë¡
         WNDCLASS wndclass;
         wndclass.style = CS_HREDRAW | CS_VREDRAW;
         wndclass.lpfnWndProc = WndProc;
@@ -159,8 +159,8 @@ BOOL CALLBACK DlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
         wndclass.lpszClassName = "MyWndClass";
         if (!RegisterClass(&wndclass)) return 1;
 
-        // ÀÚ½Ä À©µµ¿ì »ı¼º
-        g_hDrawWnd = CreateWindow("MyWndClass", "±×¸² ±×¸± À©µµ¿ì", WS_CHILD,
+        // ìì‹ ìœˆë„ìš° ìƒì„±
+        g_hDrawWnd = CreateWindow("MyWndClass", "ê·¸ë¦¼ ê·¸ë¦´ ìœˆë„ìš°", WS_CHILD,
             450, 38, 425, 415, hDlg, (HMENU)NULL, g_hInst, NULL);
         if (g_hDrawWnd == NULL) return 1;
         ShowWindow(g_hDrawWnd, SW_SHOW);
@@ -183,16 +183,16 @@ BOOL CALLBACK DlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
             g_port = GetDlgItemInt(hDlg, IDC_PORT, NULL, FALSE);
             g_isIPv6 = SendMessage(hButtonIsIPv6, BM_GETCHECK, 0, 0);
 
-            // ¼ÒÄÏ Åë½Å ½º·¹µå ½ÃÀÛ
+            // ì†Œì¼“ í†µì‹  ìŠ¤ë ˆë“œ ì‹œì‘
             g_hClientThread = CreateThread(NULL, 0, ClientMain, NULL, 0, NULL);
             if (g_hClientThread == NULL) {
-                MessageBox(hDlg, "Å¬¶óÀÌ¾ğÆ®¸¦ ½ÃÀÛÇÒ ¼ö ¾ø½À´Ï´Ù."
-                    "\r\nÇÁ·Î±×·¥À» Á¾·áÇÕ´Ï´Ù.", "½ÇÆĞ!", MB_ICONERROR);
+                MessageBox(hDlg, "í´ë¼ì´ì–¸íŠ¸ë¥¼ ì‹œì‘í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤."
+                    "\r\ní”„ë¡œê·¸ë¨ì„ ì¢…ë£Œí•©ë‹ˆë‹¤.", "ì‹¤íŒ¨!", MB_ICONERROR);
                 EndDialog(hDlg, 0);
             }
             else {
                 EnableWindow(hButtonConnect, FALSE);
-                while (g_bStart == FALSE); // ¼­¹ö Á¢¼Ó ¼º°ø ±â´Ù¸²
+                while (g_bStart == FALSE); // ì„œë²„ ì ‘ì† ì„±ê³µ ê¸°ë‹¤ë¦¼
                 EnableWindow(hButtonIsIPv6, FALSE);
                 EnableWindow(hEditIPaddr, FALSE);
                 EnableWindow(hEditPort, FALSE);
@@ -202,12 +202,12 @@ BOOL CALLBACK DlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
             return TRUE;
 
         case IDC_SENDMSG:
-            // ÀĞ±â ¿Ï·á¸¦ ±â´Ù¸²
+            // ì½ê¸° ì™„ë£Œë¥¼ ê¸°ë‹¤ë¦¼
             WaitForSingleObject(g_hReadEvent, INFINITE);
             GetDlgItemText(hDlg, IDC_MSG, g_chatmsg.buf, MSGSIZE);
-            // ¾²±â ¿Ï·á¸¦ ¾Ë¸²
+            // ì“°ê¸° ì™„ë£Œë¥¼ ì•Œë¦¼
             SetEvent(g_hWriteEvent);
-            // ÀÔ·ÂµÈ ÅØ½ºÆ® ÀüÃ¼¸¦ ¼±ÅÃ Ç¥½Ã
+            // ì…ë ¥ëœ í…ìŠ¤íŠ¸ ì „ì²´ë¥¼ ì„ íƒ í‘œì‹œ
             SendMessage(hEditMsg, EM_SETSEL, 0, -1);
             return TRUE;
 
@@ -224,8 +224,8 @@ BOOL CALLBACK DlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
             return TRUE;
 
         case IDCANCEL:
-            if (MessageBox(hDlg, "Á¤¸»·Î Á¾·áÇÏ½Ã°Ú½À´Ï±î?",
-                "Áú¹®", MB_YESNO | MB_ICONQUESTION) == IDYES)
+            if (MessageBox(hDlg, "ì •ë§ë¡œ ì¢…ë£Œí•˜ì‹œê² ìŠµë‹ˆê¹Œ?",
+                "ì§ˆë¬¸", MB_YESNO | MB_ICONQUESTION) == IDYES)
             {
                 closesocket(g_sock);
                 EndDialog(hDlg, IDCANCEL);
@@ -239,7 +239,7 @@ BOOL CALLBACK DlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
     return FALSE;
 }
 
-// ¼ÒÄÏ Åë½Å ½º·¹µå ÇÔ¼ö
+// ì†Œì¼“ í†µì‹  ìŠ¤ë ˆë“œ í•¨ìˆ˜
 DWORD WINAPI ClientMain(LPVOID arg)
 {
     int retval;
@@ -274,22 +274,22 @@ DWORD WINAPI ClientMain(LPVOID arg)
         retval = connect(g_sock, (SOCKADDR *)&serveraddr, sizeof(serveraddr));
         if (retval == SOCKET_ERROR) err_quit("connect()");
     }
-    MessageBox(NULL, "¼­¹ö¿¡ Á¢¼ÓÇß½À´Ï´Ù.", "¼º°ø!", MB_ICONINFORMATION);
+    MessageBox(NULL, "ì„œë²„ì— ì ‘ì†í–ˆìŠµë‹ˆë‹¤.", "ì„±ê³µ!", MB_ICONINFORMATION);
 
-    // ÀĞ±â & ¾²±â ½º·¹µå »ı¼º
+    // ì½ê¸° & ì“°ê¸° ìŠ¤ë ˆë“œ ìƒì„±
     HANDLE hThread[2];
     hThread[0] = CreateThread(NULL, 0, ReadThread, NULL, 0, NULL);
     hThread[1] = CreateThread(NULL, 0, WriteThread, NULL, 0, NULL);
     if (hThread[0] == NULL || hThread[1] == NULL) {
-        MessageBox(NULL, "½º·¹µå¸¦ ½ÃÀÛÇÒ ¼ö ¾ø½À´Ï´Ù."
-            "\r\nÇÁ·Î±×·¥À» Á¾·áÇÕ´Ï´Ù.",
-            "½ÇÆĞ!", MB_ICONERROR);
+        MessageBox(NULL, "ìŠ¤ë ˆë“œë¥¼ ì‹œì‘í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤."
+            "\r\ní”„ë¡œê·¸ë¨ì„ ì¢…ë£Œí•©ë‹ˆë‹¤.",
+            "ì‹¤íŒ¨!", MB_ICONERROR);
         exit(1);
     }
 
     g_bStart = TRUE;
 
-    // ½º·¹µå Á¾·á ´ë±â
+    // ìŠ¤ë ˆë“œ ì¢…ë£Œ ëŒ€ê¸°
     retval = WaitForMultipleObjects(2, hThread, FALSE, INFINITE);
     retval -= WAIT_OBJECT_0;
     if (retval == 0)
@@ -301,14 +301,14 @@ DWORD WINAPI ClientMain(LPVOID arg)
 
     g_bStart = FALSE;
 
-    MessageBox(NULL, "¼­¹ö°¡ Á¢¼ÓÀ» ²÷¾ú½À´Ï´Ù", "¾Ë¸²", MB_ICONINFORMATION);
+    MessageBox(NULL, "ì„œë²„ê°€ ì ‘ì†ì„ ëŠì—ˆìŠµë‹ˆë‹¤", "ì•Œë¦¼", MB_ICONINFORMATION);
     EnableWindow(g_hButtonSendMsg, FALSE);
 
     closesocket(g_sock);
     return 0;
 }
 
-// µ¥ÀÌÅÍ ¹Ş±â
+// ë°ì´í„° ë°›ê¸°
 DWORD WINAPI ReadThread(LPVOID arg)
 {
     int retval;
@@ -324,7 +324,7 @@ DWORD WINAPI ReadThread(LPVOID arg)
 
         if (comm_msg.type == CHATTING) {
             chat_msg = (CHAT_MSG *)&comm_msg;
-            DisplayText("[¹ŞÀº ¸Ş½ÃÁö] %s\r\n", chat_msg->buf);
+            DisplayText("[ë°›ì€ ë©”ì‹œì§€] %s\r\n", chat_msg->buf);
         }
 
         else if (comm_msg.type == DRAWLINE) {
@@ -339,41 +339,41 @@ DWORD WINAPI ReadThread(LPVOID arg)
     return 0;
 }
 
-// µ¥ÀÌÅÍ º¸³»±â
+// ë°ì´í„° ë³´ë‚´ê¸°
 DWORD WINAPI WriteThread(LPVOID arg)
 {
     int retval;
 
-    // ¼­¹ö¿Í µ¥ÀÌÅÍ Åë½Å
+    // ì„œë²„ì™€ ë°ì´í„° í†µì‹ 
     while (1) {
-        // ¾²±â ¿Ï·á ±â´Ù¸®±â
+        // ì“°ê¸° ì™„ë£Œ ê¸°ë‹¤ë¦¬ê¸°
         WaitForSingleObject(g_hWriteEvent, INFINITE);
 
-        // ¹®ÀÚ¿­ ±æÀÌ°¡ 0ÀÌ¸é º¸³»Áö ¾ÊÀ½
+        // ë¬¸ìì—´ ê¸¸ì´ê°€ 0ì´ë©´ ë³´ë‚´ì§€ ì•ŠìŒ
         if (strlen(g_chatmsg.buf) == 0) {
-            // '¸Ş½ÃÁö Àü¼Û' ¹öÆ° È°¼ºÈ­
+            // 'ë©”ì‹œì§€ ì „ì†¡' ë²„íŠ¼ í™œì„±í™”
             EnableWindow(g_hButtonSendMsg, TRUE);
-            // ÀĞ±â ¿Ï·á ¾Ë¸®±â
+            // ì½ê¸° ì™„ë£Œ ì•Œë¦¬ê¸°
             SetEvent(g_hReadEvent);
             continue;
         }
 
-        // µ¥ÀÌÅÍ º¸³»±â
+        // ë°ì´í„° ë³´ë‚´ê¸°
         retval = send(g_sock, (char *)&g_chatmsg, BUFSIZE, 0);
         if (retval == SOCKET_ERROR) {
             break;
         }
 
-        // '¸Ş½ÃÁö Àü¼Û' ¹öÆ° È°¼ºÈ­
+        // 'ë©”ì‹œì§€ ì „ì†¡' ë²„íŠ¼ í™œì„±í™”
         EnableWindow(g_hButtonSendMsg, TRUE);
-        // ÀĞ±â ¿Ï·á ¾Ë¸®±â
+        // ì½ê¸° ì™„ë£Œ ì•Œë¦¬ê¸°
         SetEvent(g_hReadEvent);
     }
 
     return 0;
 }
 
-// ÀÚ½Ä À©µµ¿ì ÇÁ·Î½ÃÀú
+// ìì‹ ìœˆë„ìš° í”„ë¡œì‹œì €
 LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     HDC hDC;
@@ -391,15 +391,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     case WM_CREATE:
         hDC = GetDC(hWnd);
 
-        // È­¸éÀ» ÀúÀåÇÒ ºñÆ®¸Ê »ı¼º
+        // í™”ë©´ì„ ì €ì¥í•  ë¹„íŠ¸ë§µ ìƒì„±
         cx = GetDeviceCaps(hDC, HORZRES);
         cy = GetDeviceCaps(hDC, VERTRES);
         hBitmap = CreateCompatibleBitmap(hDC, cx, cy);
 
-        // ¸Ş¸ğ¸® DC »ı¼º
+        // ë©”ëª¨ë¦¬ DC ìƒì„±
         hDCMem = CreateCompatibleDC(hDC);
 
-        // ºñÆ®¸Ê ¼±ÅÃ ÈÄ ¸Ş¸ğ¸® DC È­¸éÀ» Èò»öÀ¸·Î Ä¥ÇÔ
+        // ë¹„íŠ¸ë§µ ì„ íƒ í›„ ë©”ëª¨ë¦¬ DC í™”ë©´ì„ í°ìƒ‰ìœ¼ë¡œ ì¹ í•¨
         SelectObject(hDCMem, hBitmap);
         SelectObject(hDCMem, GetStockObject(WHITE_BRUSH));
         SelectObject(hDCMem, GetStockObject(WHITE_PEN));
@@ -417,7 +417,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             x1 = LOWORD(lParam);
             y1 = HIWORD(lParam);
 
-            // ¼± ±×¸®±â ¸Ş½ÃÁö º¸³»±â
+            // ì„  ê·¸ë¦¬ê¸° ë©”ì‹œì§€ ë³´ë‚´ê¸°
             g_drawmsg.x0 = x0;
             g_drawmsg.y0 = y0;
             g_drawmsg.x1 = x1;
@@ -435,13 +435,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         hDC = GetDC(hWnd);
         hPen = CreatePen(PS_SOLID, 3, g_drawcolor);
 
-        // È­¸é¿¡ ±×¸®±â
+        // í™”ë©´ì— ê·¸ë¦¬ê¸°
         hOldPen = (HPEN)SelectObject(hDC, hPen);
         MoveToEx(hDC, LOWORD(wParam), HIWORD(wParam), NULL);
         LineTo(hDC, LOWORD(lParam), HIWORD(lParam));
         SelectObject(hDC, hOldPen);
 
-        // ¸Ş¸ğ¸® ºñÆ®¸Ê¿¡ ±×¸®±â
+        // ë©”ëª¨ë¦¬ ë¹„íŠ¸ë§µì— ê·¸ë¦¬ê¸°
         hOldPen = (HPEN)SelectObject(hDCMem, hPen);
         MoveToEx(hDCMem, LOWORD(wParam), HIWORD(wParam), NULL);
         LineTo(hDCMem, LOWORD(lParam), HIWORD(lParam));
@@ -453,7 +453,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     case WM_PAINT:
         hDC = BeginPaint(hWnd, &ps);
 
-        // ¸Ş¸ğ¸® ºñÆ®¸Ê¿¡ ÀúÀåµÈ ±×¸²À» È­¸é¿¡ Àü¼Û
+        // ë©”ëª¨ë¦¬ ë¹„íŠ¸ë§µì— ì €ì¥ëœ ê·¸ë¦¼ì„ í™”ë©´ì— ì „ì†¡
         GetClientRect(hWnd, &rect);
         BitBlt(hDC, 0, 0, rect.right - rect.left,
             rect.bottom - rect.top, hDCMem, 0, 0, SRCCOPY);
@@ -470,7 +470,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
 
-// ¿¡µğÆ® ÄÁÆ®·Ñ¿¡ ¹®ÀÚ¿­ Ãâ·Â
+// ì—ë””íŠ¸ ì»¨íŠ¸ë¡¤ì— ë¬¸ìì—´ ì¶œë ¥
 void DisplayText(char *fmt, ...)
 {
     va_list arg;
@@ -486,7 +486,7 @@ void DisplayText(char *fmt, ...)
     va_end(arg);
 }
 
-// »ç¿ëÀÚ Á¤ÀÇ µ¥ÀÌÅÍ ¼ö½Å ÇÔ¼ö
+// ì‚¬ìš©ì ì •ì˜ ë°ì´í„° ìˆ˜ì‹  í•¨ìˆ˜
 int recvn(SOCKET s, char *buf, int len, int flags)
 {
     int received;
@@ -506,7 +506,7 @@ int recvn(SOCKET s, char *buf, int len, int flags)
     return (len - left);
 }
 
-// ¼ÒÄÏ ÇÔ¼ö ¿À·ù Ãâ·Â ÈÄ Á¾·á
+// ì†Œì¼“ í•¨ìˆ˜ ì˜¤ë¥˜ ì¶œë ¥ í›„ ì¢…ë£Œ
 void err_quit(char *msg)
 {
     LPVOID lpMsgBuf;
@@ -520,7 +520,7 @@ void err_quit(char *msg)
     exit(1);
 }
 
-// ¼ÒÄÏ ÇÔ¼ö ¿À·ù Ãâ·Â
+// ì†Œì¼“ í•¨ìˆ˜ ì˜¤ë¥˜ ì¶œë ¥
 void err_display(char *msg)
 {
     LPVOID lpMsgBuf;
