@@ -1,4 +1,4 @@
-#define _WINSOCK_DEPRECATED_NO_WARNINGS // ÃÖ½Å VC++ ÄÄÆÄÀÏ ½Ã °æ°í ¹æÁö
+#define _WINSOCK_DEPRECATED_NO_WARNINGS // ìµœì‹  VC++ ì»´íŒŒì¼ ì‹œ ê²½ê³  ë°©ì§€
 #pragma comment(lib, "ws2_32")
 #include <winsock2.h>
 #include <ws2tcpip.h>
@@ -9,7 +9,7 @@
 #define SERVERPORT 9000
 #define BUFSIZE    256
 
-// ¼ÒÄÏ Á¤º¸ ÀúÀåÀ» À§ÇÑ ±¸Á¶Ã¼¿Í º¯¼ö
+// ì†Œì¼“ ì •ë³´ ì €ì¥ì„ ìœ„í•œ êµ¬ì¡°ì²´ì™€ ë³€ìˆ˜
 struct SOCKETINFO
 {
     SOCKET sock;
@@ -21,11 +21,11 @@ struct SOCKETINFO
 int nTotalSockets = 0;
 SOCKETINFO *SocketInfoArray[FD_SETSIZE];
 
-// ¼ÒÄÏ °ü¸® ÇÔ¼ö
+// ì†Œì¼“ ê´€ë¦¬ í•¨ìˆ˜
 BOOL AddSocketInfo(SOCKET sock, bool isIPv6);
 void RemoveSocketInfo(int nIndex);
 
-// ¿À·ù Ãâ·Â ÇÔ¼ö
+// ì˜¤ë¥˜ ì¶œë ¥ í•¨ìˆ˜
 void err_quit(char *msg);
 void err_display(char *msg);
 
@@ -33,11 +33,11 @@ int main(int argc, char *argv[])
 {
     int retval;
 
-    // À©¼Ó ÃÊ±âÈ­
+    // ìœˆì† ì´ˆê¸°í™”
     WSADATA wsa;
     if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0) return 1;
 
-    /*----- IPv4 ¼ÒÄÏ ÃÊ±âÈ­ ½ÃÀÛ -----*/
+    /*----- IPv4 ì†Œì¼“ ì´ˆê¸°í™” ì‹œì‘ -----*/
     // socket()
     SOCKET listen_sockv4 = socket(AF_INET, SOCK_STREAM, 0);
     if (listen_sockv4 == INVALID_SOCKET) err_quit("socket()");
@@ -54,9 +54,9 @@ int main(int argc, char *argv[])
     // listen()
     retval = listen(listen_sockv4, SOMAXCONN);
     if (retval == SOCKET_ERROR) err_quit("listen()");
-    /*----- IPv4 ¼ÒÄÏ ÃÊ±âÈ­ ³¡ -----*/
+    /*----- IPv4 ì†Œì¼“ ì´ˆê¸°í™” ë -----*/
 
-    /*----- IPv6 ¼ÒÄÏ ÃÊ±âÈ­ ½ÃÀÛ -----*/
+    /*----- IPv6 ì†Œì¼“ ì´ˆê¸°í™” ì‹œì‘ -----*/
     // socket()
     SOCKET listen_sockv6 = socket(AF_INET6, SOCK_STREAM, 0);
     if (listen_sockv6 == INVALID_SOCKET) err_quit("socket()");
@@ -73,19 +73,19 @@ int main(int argc, char *argv[])
     // listen()
     retval = listen(listen_sockv6, SOMAXCONN);
     if (retval == SOCKET_ERROR) err_quit("listen()");
-    /*----- IPv6 ¼ÒÄÏ ÃÊ±âÈ­ ³¡ -----*/
+    /*----- IPv6 ì†Œì¼“ ì´ˆê¸°í™” ë -----*/
 
-    // µ¥ÀÌÅÍ Åë½Å¿¡ »ç¿ëÇÒ º¯¼ö(°øÅë)
+    // ë°ì´í„° í†µì‹ ì— ì‚¬ìš©í•  ë³€ìˆ˜(ê³µí†µ)
     FD_SET rset;
     SOCKET client_sock;
     int addrlen, i, j;
-    // µ¥ÀÌÅÍ Åë½Å¿¡ »ç¿ëÇÒ º¯¼ö(IPv4)
+    // ë°ì´í„° í†µì‹ ì— ì‚¬ìš©í•  ë³€ìˆ˜(IPv4)
     SOCKADDR_IN clientaddrv4;
-    // µ¥ÀÌÅÍ Åë½Å¿¡ »ç¿ëÇÒ º¯¼ö(IPv6)
+    // ë°ì´í„° í†µì‹ ì— ì‚¬ìš©í•  ë³€ìˆ˜(IPv6)
     SOCKADDR_IN6 clientaddrv6;
 
     while (1) {
-        // ¼ÒÄÏ ¼Â ÃÊ±âÈ­
+        // ì†Œì¼“ ì…‹ ì´ˆê¸°í™”
         FD_ZERO(&rset);
         FD_SET(listen_sockv4, &rset);
         FD_SET(listen_sockv6, &rset);
@@ -100,7 +100,7 @@ int main(int argc, char *argv[])
             break;
         }
 
-        // ¼ÒÄÏ ¼Â °Ë»ç(1): Å¬¶óÀÌ¾ğÆ® Á¢¼Ó ¼ö¿ë
+        // ì†Œì¼“ ì…‹ ê²€ì‚¬(1): í´ë¼ì´ì–¸íŠ¸ ì ‘ì† ìˆ˜ìš©
         if (FD_ISSET(listen_sockv4, &rset)) {
             addrlen = sizeof(clientaddrv4);
             client_sock = accept(listen_sockv4, (SOCKADDR *)&clientaddrv4, &addrlen);
@@ -109,10 +109,10 @@ int main(int argc, char *argv[])
                 break;
             }
             else {
-                // Á¢¼ÓÇÑ Å¬¶óÀÌ¾ğÆ® Á¤º¸ Ãâ·Â
-                printf("[TCPv4 ¼­¹ö] Å¬¶óÀÌ¾ğÆ® Á¢¼Ó: [%s]:%d\n",
+                // ì ‘ì†í•œ í´ë¼ì´ì–¸íŠ¸ ì •ë³´ ì¶œë ¥
+                printf("[TCPv4 ì„œë²„] í´ë¼ì´ì–¸íŠ¸ ì ‘ì†: [%s]:%d\n",
                     inet_ntoa(clientaddrv4.sin_addr), ntohs(clientaddrv4.sin_port));
-                // ¼ÒÄÏ Á¤º¸ Ãß°¡
+                // ì†Œì¼“ ì •ë³´ ì¶”ê°€
                 AddSocketInfo(client_sock, false);
             }
         }
@@ -124,22 +124,22 @@ int main(int argc, char *argv[])
                 break;
             }
             else {
-                // Á¢¼ÓÇÑ Å¬¶óÀÌ¾ğÆ® Á¤º¸ Ãâ·Â
+                // ì ‘ì†í•œ í´ë¼ì´ì–¸íŠ¸ ì •ë³´ ì¶œë ¥
                 char ipaddr[50];
                 DWORD ipaddrlen = sizeof(ipaddr);
                 WSAAddressToString((SOCKADDR *)&clientaddrv6, sizeof(clientaddrv6),
                     NULL, ipaddr, &ipaddrlen);
-                printf("[TCPv6 ¼­¹ö] Å¬¶óÀÌ¾ğÆ® Á¢¼Ó: %s\n", ipaddr);
-                // ¼ÒÄÏ Á¤º¸ Ãß°¡
+                printf("[TCPv6 ì„œë²„] í´ë¼ì´ì–¸íŠ¸ ì ‘ì†: %s\n", ipaddr);
+                // ì†Œì¼“ ì •ë³´ ì¶”ê°€
                 AddSocketInfo(client_sock, true);
             }
         }
 
-        // ¼ÒÄÏ ¼Â °Ë»ç(2): µ¥ÀÌÅÍ Åë½Å
+        // ì†Œì¼“ ì…‹ ê²€ì‚¬(2): ë°ì´í„° í†µì‹ 
         for (i = 0; i < nTotalSockets; i++) {
             SOCKETINFO *ptr = SocketInfoArray[i];
             if (FD_ISSET(ptr->sock, &rset)) {
-                // µ¥ÀÌÅÍ ¹Ş±â
+                // ë°ì´í„° ë°›ê¸°
                 retval = recv(ptr->sock, ptr->buf + ptr->recvbytes,
                     BUFSIZE - ptr->recvbytes, 0);
                 if (retval == 0 || retval == SOCKET_ERROR) {
@@ -147,21 +147,21 @@ int main(int argc, char *argv[])
                     continue;
                 }
 
-                // ¹ŞÀº ¹ÙÀÌÆ® ¼ö ´©Àû
+                // ë°›ì€ ë°”ì´íŠ¸ ìˆ˜ ëˆ„ì 
                 ptr->recvbytes += retval;
 
                 if (ptr->recvbytes == BUFSIZE) {
-                    // ¹ŞÀº ¹ÙÀÌÆ® ¼ö ¸®¼Â
+                    // ë°›ì€ ë°”ì´íŠ¸ ìˆ˜ ë¦¬ì…‹
                     ptr->recvbytes = 0;
 
-                    // ÇöÀç Á¢¼ÓÇÑ ¸ğµç Å¬¶óÀÌ¾ğÆ®¿¡°Ô µ¥ÀÌÅÍ¸¦ º¸³¿!
+                    // í˜„ì¬ ì ‘ì†í•œ ëª¨ë“  í´ë¼ì´ì–¸íŠ¸ì—ê²Œ ë°ì´í„°ë¥¼ ë³´ëƒ„!
                     for (j = 0; j < nTotalSockets; j++) {
                         SOCKETINFO *ptr2 = SocketInfoArray[j];
                         retval = send(ptr2->sock, ptr->buf, BUFSIZE, 0);
                         if (retval == SOCKET_ERROR) {
                             err_display("send()");
                             RemoveSocketInfo(j);
-                            --j; // ·çÇÁ ÀÎµ¦½º º¸Á¤
+                            --j; // ë£¨í”„ ì¸ë±ìŠ¤ ë³´ì •
                             continue;
                         }
                     }
@@ -173,17 +173,17 @@ int main(int argc, char *argv[])
     return 0;
 }
 
-// ¼ÒÄÏ Á¤º¸ Ãß°¡
+// ì†Œì¼“ ì •ë³´ ì¶”ê°€
 BOOL AddSocketInfo(SOCKET sock, bool isIPv6)
 {
     if (nTotalSockets >= FD_SETSIZE) {
-        printf("[¿À·ù] ¼ÒÄÏ Á¤º¸¸¦ Ãß°¡ÇÒ ¼ö ¾ø½À´Ï´Ù!\n");
+        printf("[ì˜¤ë¥˜] ì†Œì¼“ ì •ë³´ë¥¼ ì¶”ê°€í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤!\n");
         return FALSE;
     }
 
     SOCKETINFO *ptr = new SOCKETINFO;
     if (ptr == NULL) {
-        printf("[¿À·ù] ¸Ş¸ğ¸®°¡ ºÎÁ·ÇÕ´Ï´Ù!\n");
+        printf("[ì˜¤ë¥˜] ë©”ëª¨ë¦¬ê°€ ë¶€ì¡±í•©ë‹ˆë‹¤!\n");
         return FALSE;
     }
 
@@ -195,17 +195,17 @@ BOOL AddSocketInfo(SOCKET sock, bool isIPv6)
     return TRUE;
 }
 
-// ¼ÒÄÏ Á¤º¸ »èÁ¦
+// ì†Œì¼“ ì •ë³´ ì‚­ì œ
 void RemoveSocketInfo(int nIndex)
 {
     SOCKETINFO *ptr = SocketInfoArray[nIndex];
 
-    // Á¾·áÇÑ Å¬¶óÀÌ¾ğÆ® Á¤º¸ Ãâ·Â
+    // ì¢…ë£Œí•œ í´ë¼ì´ì–¸íŠ¸ ì •ë³´ ì¶œë ¥
     if (ptr->isIPv6 == false) {
         SOCKADDR_IN clientaddrv4;
         int addrlen = sizeof(clientaddrv4);
         getpeername(ptr->sock, (SOCKADDR *)&clientaddrv4, &addrlen);
-        printf("[TCPv4 ¼­¹ö] Å¬¶óÀÌ¾ğÆ® Á¾·á: [%s]:%d\n",
+        printf("[TCPv4 ì„œë²„] í´ë¼ì´ì–¸íŠ¸ ì¢…ë£Œ: [%s]:%d\n",
             inet_ntoa(clientaddrv4.sin_addr), ntohs(clientaddrv4.sin_port));
     }
     else {
@@ -217,7 +217,7 @@ void RemoveSocketInfo(int nIndex)
         DWORD ipaddrlen = sizeof(ipaddr);
         WSAAddressToString((SOCKADDR *)&clientaddrv6, sizeof(clientaddrv6),
             NULL, ipaddr, &ipaddrlen);
-        printf("[TCPv6 ¼­¹ö] Å¬¶óÀÌ¾ğÆ® Á¾·á: %s\n", ipaddr);
+        printf("[TCPv6 ì„œë²„] í´ë¼ì´ì–¸íŠ¸ ì¢…ë£Œ: %s\n", ipaddr);
     }
 
     closesocket(ptr->sock);
@@ -229,7 +229,7 @@ void RemoveSocketInfo(int nIndex)
     --nTotalSockets;
 }
 
-// ¼ÒÄÏ ÇÔ¼ö ¿À·ù Ãâ·Â ÈÄ Á¾·á
+// ì†Œì¼“ í•¨ìˆ˜ ì˜¤ë¥˜ ì¶œë ¥ í›„ ì¢…ë£Œ
 void err_quit(char *msg)
 {
     LPVOID lpMsgBuf;
@@ -243,7 +243,7 @@ void err_quit(char *msg)
     exit(1);
 }
 
-// ¼ÒÄÏ ÇÔ¼ö ¿À·ù Ãâ·Â
+// ì†Œì¼“ í•¨ìˆ˜ ì˜¤ë¥˜ ì¶œë ¥
 void err_display(char *msg)
 {
     LPVOID lpMsgBuf;
