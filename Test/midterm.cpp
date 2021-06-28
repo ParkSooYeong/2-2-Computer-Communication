@@ -9,40 +9,40 @@
 
 WSADATA wsaData;
 
-// IP ÁÖ¼Ò ¾ò±â
+// IP ì£¼ì†Œ ì–»ê¸°
 int getAddrHost(void)
 {
   int i;
-  HOSTENT *lpHost;       //  È£½ºÆ® Á¤º¸¸¦ ÀúÀåÇÏ´Â ±¸Á¶Ã¼
-  IN_ADDR inaddr;       // IP ÁÖ¼Ò¸¦ ÀúÀåÇÏ´Â ±¸Á¶Ã¼
-  char szIPBuf[256], szIP[16];  // È£½ºÆ® ÀÌ¸§, IP ÁÖ¼Ò¸¦ ÀúÀåÇÏ´Â ¹è¿­
+  HOSTENT *lpHost;       //  í˜¸ìŠ¤íŠ¸ ì •ë³´ë¥¼ ì €ì¥í•˜ëŠ” êµ¬ì¡°ì²´
+  IN_ADDR inaddr;       // IP ì£¼ì†Œë¥¼ ì €ì¥í•˜ëŠ” êµ¬ì¡°ì²´
+  char szIPBuf[256], szIP[16];  // í˜¸ìŠ¤íŠ¸ ì´ë¦„, IP ì£¼ì†Œë¥¼ ì €ì¥í•˜ëŠ” ë°°ì—´
  
-  // ¿¡·¯ Ã³¸®
+  // ì—ëŸ¬ ì²˜ë¦¬
   if (WSAStartup(MAKEWORD(2, 0), &wsaData) != 0)
   {
     return -1;
   }
  
-  // ·ÎÄÃ ¸Ó½ÅÀÇ È£½ºÆ® ÀÌ¸§À» ¾ò´Â´Ù
+  // ë¡œì»¬ ë¨¸ì‹ ì˜ í˜¸ìŠ¤íŠ¸ ì´ë¦„ì„ ì–»ëŠ”ë‹¤
   gethostname(szIPBuf, (int)sizeof(szIPBuf));
  
-  // È£½ºÆ® Á¤º¸ ¾ò±â
+  // í˜¸ìŠ¤íŠ¸ ì •ë³´ ì–»ê¸°
   lpHost = gethostbyname(szIPBuf);
 
-  // IP ÁÖ¼Ò ¾ò±â
+  // IP ì£¼ì†Œ ì–»ê¸°
   for(i=0; lpHost->h_addr_list[i]; i++)
   {
     memcpy(&inaddr, lpHost->h_addr_list[i], 4);
   }
 
   strcpy(szIP, inet_ntoa(inaddr));
-  printf("À¥ ºê¶ó¿ìÀú¿¡ ´ÙÀ½ URLÀ» ÀÔ·ÂÇÏ¼¼¿ä. : http://%s:%d\n", szIP, PORT_NUM);  
+  printf("ì›¹ ë¸Œë¼ìš°ì €ì— ë‹¤ìŒ URLì„ ì…ë ¥í•˜ì„¸ìš”. : http://%s:%d\n", szIP, PORT_NUM);  
  
   WSACleanup();
   return 0;
 }
 
-// ¼ÒÄÏ ÇÔ¼ö ¿À·ù Ãâ·Â ÈÄ Á¾·á
+// ì†Œì¼“ í•¨ìˆ˜ ì˜¤ë¥˜ ì¶œë ¥ í›„ ì¢…ë£Œ
 void err_quit(char *msg)
 {
 	LPVOID lpMsgBuf;
@@ -56,7 +56,7 @@ void err_quit(char *msg)
 	exit(1);
 }
 
-// ¼ÒÄÏ ÇÔ¼ö ¿À·ù Ãâ·Â
+// ì†Œì¼“ í•¨ìˆ˜ ì˜¤ë¥˜ ì¶œë ¥
 void err_display(char *msg)
 {
 	LPVOID lpMsgBuf;
@@ -69,7 +69,7 @@ void err_display(char *msg)
 	LocalFree(lpMsgBuf);
 }
 
-// Å¬¶óÀÌ¾ğÆ®¿Í µ¥ÀÌÅÍ Åë½Å
+// í´ë¼ì´ì–¸íŠ¸ì™€ ë°ì´í„° í†µì‹ 
 DWORD WINAPI ProcessClient(LPVOID arg)
 {
 	SOCKET client_sock = (SOCKET)arg;
@@ -78,12 +78,12 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 	int addrlen;
 	char buf[BUFSIZE+1];
 
-	// Å¬¶óÀÌ¾ğÆ® Á¤º¸ ¾ò±â
+	// í´ë¼ì´ì–¸íŠ¸ ì •ë³´ ì–»ê¸°
 	addrlen = sizeof(clientaddr);
 	getpeername(client_sock, (SOCKADDR *)&clientaddr, &addrlen);
 
 	while(1){
-		// µ¥ÀÌÅÍ ¹Ş±â
+		// ë°ì´í„° ë°›ê¸°
 		retval = recv(client_sock, buf, BUFSIZE, 0);
 		if(retval == SOCKET_ERROR){
 			err_display("recv()");
@@ -92,12 +92,12 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 		else if(retval == 0)
 			break;
 
-		// ¹ŞÀº µ¥ÀÌÅÍ Ãâ·Â
+		// ë°›ì€ ë°ì´í„° ì¶œë ¥
 		//buf[retval] = '\0';
 		//printf("[TCP/%s:%d] %s\n", inet_ntoa(clientaddr.sin_addr),
 			//ntohs(clientaddr.sin_port), buf);
 
-		// µ¥ÀÌÅÍ º¸³»±â
+		// ë°ì´í„° ë³´ë‚´ê¸°
 		retval = send(client_sock, buf, retval, 0);
 		if(retval == SOCKET_ERROR){
 			err_display("send()");
@@ -107,7 +107,7 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 
 	// closesocket()
 	closesocket(client_sock);
-	//printf("[TCP ¼­¹ö] Å¬¶óÀÌ¾ğÆ® Á¾·á: IP ÁÖ¼Ò=%s, Æ÷Æ® ¹øÈ£=%d\n",
+	//printf("[TCP ì„œë²„] í´ë¼ì´ì–¸íŠ¸ ì¢…ë£Œ: IP ì£¼ì†Œ=%s, í¬íŠ¸ ë²ˆí˜¸=%d\n",
 		//inet_ntoa(clientaddr.sin_addr), ntohs(clientaddr.sin_port));
 
 	return 0;
@@ -124,13 +124,13 @@ int main(int argc, char *argv[])
 	char szBuf[2048];
 	char szInBuf[2048];
 
-	// À©¼Ó ÃÊ±âÈ­ , ¸®ÅÏ °ª¸¸À¸·Î ¿À·ù¸¦ Ã³¸®ÇÏ´Â °æ¿ì
+	// ìœˆì† ì´ˆê¸°í™” , ë¦¬í„´ ê°’ë§Œìœ¼ë¡œ ì˜¤ë¥˜ë¥¼ ì²˜ë¦¬í•˜ëŠ” ê²½ìš°
     if(WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
     {
         return 1;
     }
 
-	// ¼ÒÄÏ »ı¼º , ½ÇÆĞ ½Ã ¿¡·¯ ¹øÈ£ Ãâ·Â
+	// ì†Œì¼“ ìƒì„± , ì‹¤íŒ¨ ì‹œ ì—ëŸ¬ ë²ˆí˜¸ ì¶œë ¥
     SOCKET sockSvr = socket(AF_INET, SOCK_STREAM, 0);
     if(sockSvr == INVALID_SOCKET)
     {
@@ -138,18 +138,18 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-	printf("¼º°á´ëÇĞ±³ °ø°ú´ëÇĞ Á¤º¸Åë½Å°øÇĞ°ú - 20170910 ¹Ú¼ö¿µ\n");
-	printf("2ÇĞ³â ÄÄÇ»ÅÍÅë½Å ÇÁ·Î±×·¡¹Ö °æÁø´ëÈ¸ - Program 'SooYoung's WebServer\n\n");
+	printf("ì„±ê²°ëŒ€í•™êµ ê³µê³¼ëŒ€í•™ ì •ë³´í†µì‹ ê³µí•™ê³¼ - 20170910 ë°•ìˆ˜ì˜\n");
+	printf("2í•™ë…„ ì»´í“¨í„°í†µì‹  í”„ë¡œê·¸ë˜ë° ê²½ì§„ëŒ€íšŒ - Program 'SooYoung's WebServer\n\n");
 	getAddrHost();
-	printf("ÀÎÅÍ³İ ÀÍ½ºÇÃ·Î¾î ºê¶ó¿ìÀú¿¡¼­ ¸Ş½ÃÁö Ãâ·ÂÀ» º¼ ¼ö ÀÖ½À´Ï´Ù. \n");
-	printf("À¥ ¼­¹ö Á¢¼Ó ½Ã, Á¢¼ÓÇÒ ¶§¸¶´Ù ¾Æ·¡¿¡ »ç¿ëÀÚ Á¢¼Ó Á¤º¸°¡ Ç¥½ÃµË´Ï´Ù.\n\n\n");
+	printf("ì¸í„°ë„· ìµìŠ¤í”Œë¡œì–´ ë¸Œë¼ìš°ì €ì—ì„œ ë©”ì‹œì§€ ì¶œë ¥ì„ ë³¼ ìˆ˜ ìˆìŠµë‹ˆë‹¤. \n");
+	printf("ì›¹ ì„œë²„ ì ‘ì† ì‹œ, ì ‘ì†í•  ë•Œë§ˆë‹¤ ì•„ë˜ì— ì‚¬ìš©ì ì ‘ì† ì •ë³´ê°€ í‘œì‹œë©ë‹ˆë‹¤.\n\n\n");
 
-    // ¼ÒÄÏ ¼³Á¤
+    // ì†Œì¼“ ì„¤ì •
     addrSockSvr.sin_family = AF_INET;
     addrSockSvr.sin_port = htons(PORT_NUM);
     addrSockSvr.sin_addr.S_un.S_addr = INADDR_ANY;
 
-    // ¼ÒÄÏ ¿É¼Ç ¼³Á¤
+    // ì†Œì¼“ ì˜µì…˜ ì„¤ì •
     setsockopt(sockSvr, SOL_SOCKET, SO_REUSEADDR, (const char *)&bValid, sizeof(bValid));
     if(bind(sockSvr, (struct sockaddr *)&addrSockSvr, sizeof(addrSockSvr)) != 0)
     {
@@ -157,25 +157,25 @@ int main(int argc, char *argv[])
         return 1;
 	}
 
-    // TCPÅ¬¶óÀÌ¾ğÆ®·Î ºÎÅÍ Á¢¼Ó ¿ä±¸¸¦ ´ë±â
+    // TCPí´ë¼ì´ì–¸íŠ¸ë¡œ ë¶€í„° ì ‘ì† ìš”êµ¬ë¥¼ ëŒ€ê¸°
     if(listen(sockSvr, 5) != 0)
     {
         printf("Listen Error Number : %d", WSAGetLastError());
         return 1;
     }
 
-    // ÀÀ´ä¿ë HTTP ¸Ş¼¼Áö ÀÛ¼º
+    // ì‘ë‹µìš© HTTP ë©”ì„¸ì§€ ì‘ì„±
     memset(szBuf, 0, sizeof(szBuf));
     _snprintf(szBuf, sizeof(szBuf),
                 "HTTP/1.0 200 OK\r\n"
                 "Content-Length : 100\r\n"
                 "Content-Type : text/html\r\n"
                 "\r\n"
-                "¼º°á´ëÇĞ±³ °ø°ú´ëÇĞ Á¤º¸Åë½Å°øÇĞ°ú 20170910 ¹Ú¼ö¿µ\n");
+                "ì„±ê²°ëŒ€í•™êµ ê³µê³¼ëŒ€í•™ ì •ë³´í†µì‹ ê³µí•™ê³¼ 20170910 ë°•ìˆ˜ì˜\n");
 
     while (1)
 	{
-		// TCPÅ¬¶óÀÌ¾ğÆ®·Î ºÎÅÍ Á¢¼Ó ¿ä±¸ ¹Ş±â
+		// TCPí´ë¼ì´ì–¸íŠ¸ë¡œ ë¶€í„° ì ‘ì† ìš”êµ¬ ë°›ê¸°
         nlen = sizeof(addrSockclt);
         sockSS = accept(sockSvr, (struct sockaddr *)&addrSockclt, &nlen);
         if(sockSS == INVALID_SOCKET)
@@ -187,16 +187,16 @@ int main(int argc, char *argv[])
         memset(szInBuf, 0, sizeof(szInBuf));
         recv(sockSS, szInBuf, sizeof(szInBuf), 0);
 
-        // Å¬¶óÀÌ¾ğÆ®·Î ¹ŞÀº ¿ä±¸ Ã³¸® ÇÊ¿ä(¿©±â¼­´Â »ı·«)
+        // í´ë¼ì´ì–¸íŠ¸ë¡œ ë°›ì€ ìš”êµ¬ ì²˜ë¦¬ í•„ìš”(ì—¬ê¸°ì„œëŠ” ìƒëµ)
         printf("%s", szInBuf);
 
-        // Å¬¶óÀÌ¾ğÆ®¿¡ Å×½ºÆ®¿ë HTTP ¸Ş¼¼Áö ¼Û½Å
+        // í´ë¼ì´ì–¸íŠ¸ì— í…ŒìŠ¤íŠ¸ìš© HTTP ë©”ì„¸ì§€ ì†¡ì‹ 
         send(sockSS, szBuf, (int)strlen(szBuf), 0);
 
-        closesocket(sockSS); // ¼ÒÄÏ ´İ±â
+        closesocket(sockSS); // ì†Œì¼“ ë‹«ê¸°
     }
 
-    // À©¼Ó Á¾·á
+    // ìœˆì† ì¢…ë£Œ
     WSACleanup();
     return 0;
 }
